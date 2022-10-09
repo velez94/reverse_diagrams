@@ -1,0 +1,24 @@
+{"Organization": {"Id": "o-9tlhkjyoii", "Arn": "arn:aws:organizations::029921763173:organization/o-9tlhkjyoii", "FeatureSet": "ALL", "MasterAccountArn": "arn:aws:organizations::0299217
+63173:account/o-9tlhkjyoii/029921763173", "MasterAccountId": "029921763173", "MasterAccountEmail": "velez94@protonmail.com", "AvailablePolicyTypes": [{"Type": "SERVICE_CONTROL_POLICY",
+ "Status": "ENABLED"}]}, "ResponseMetadata": {"RequestId": "a24c5b2c-795f-4cf5-9316-a5d9ecc9aaf7", "HTTPStatusCode": 200, "HTTPHeaders": {"x-amzn-requestid": "a24c5b2c-795f-4cf5-9316-a5d9ecc9aaf7", "content-type": "application/x-amz-json-1.1", "content-length": "375", "date": "Sun, 09 Oct 2022 04:20:57 GMT"}, "RetryAttempts": 0}}
+
+{"Organization": {"Id": "o-9tlhkjyoii", "Arn": "arn:aws:organizations::029921763173:organization/o-9tlhkjyoii", "FeatureSet": "ALL", "MasterAccountArn": "arn:aws:organizations::0299217
+63173:account/o-9tlhkjyoii/029921763173", "MasterAccountId": "029921763173", "MasterAccountEmail": "velez94@protonmail.com", "AvailablePolicyTypes": [{"Type": "SERVICE_CONTROL_POLICY",
+ "Status": "ENABLED"}]}, "ResponseMetadata": {"RequestId": "a24c5b2c-795f-4cf5-9316-a5d9ecc9aaf7", "HTTPStatusCode": 200, "HTTPHeaders": {"x-amzn-requestid": "a24c5b2c-795f-4cf5-9316-a5d9ecc9aaf7", "content-type": "application/x-amz-json-1.1", "content-length": "375", "date": "Sun, 09 Oct 2022 04:20:57 GMT"}, "RetryAttempts": 0}}
+
+
+
+{'Accounts': [{'Id': '884478634998', 'Arn': 'arn:aws:organizations::029921763173:account/o-9tlhkjyoii/884478634998', 'Email': 'w.alejovl+ct-log-archive@gmail.com', 'Name': 'Log archive
+', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetime(2021, 1, 12, 11, 39, 56, 709000, tzinfo=tzlocal())}, {'Id': '582441254763', 'Arn': 'arn:aws:organ
+izations::029921763173:account/o-9tlhkjyoii/582441254763', 'Email': 'w.alejovl+prod-labs@gmail.com', 'Name': 'Prod', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': d
+atetime.datetime(2022, 10, 2, 17, 21, 10, 277000, tzinfo=tzlocal())}, {'Id': '895882538541', 'Arn': 'arn:aws:organizations::029921763173:account/o-9tlhkjyoii/895882538541', 'Email': 'w
+.alejovl+ct-audit@gmail.com', 'Name': 'Audit', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetime(2021, 1, 12, 11, 40, 7, 349000, tzinfo=tzlocal())}, {
+'Id': '105171185823', 'Arn': 'arn:aws:organizations::029921763173:account/o-9tlhkjyoii/105171185823', 'Email': 'w.alejovl+devsecops-labs@gmail.com', 'Name': 'DevSecOps', 'Status': 'ACT
+IVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetime(2022, 9, 12, 21, 35, 57, 217000, tzinfo=tzlocal())}, {'Id': '994261317734', 'Arn': 'arn:aws:organizations::0299217
+63173:account/o-9tlhkjyoii/994261317734', 'Email': 'w.alejovl+ct-labs@gmail.com', 'Name': 'LabVelCT', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetim
+e(2021, 1, 25, 11, 30, 19, 687000, tzinfo=tzlocal())}, {'Id': '155794986228', 'Arn': 'arn:aws:organizations::029921763173:account/o-9tlhkjyoii/155794986228', 'Email': 'w.alejovl+shared
+-labs@gmail.com', 'Name': 'SharedServices', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetime(2022, 9, 12, 22, 9, 22, 615000, tzinfo=tzlocal())}, {'Id
+': '029921763173', 'Arn': 'arn:aws:organizations::029921763173:account/o-9tlhkjyoii/029921763173', 'Email': 'velez94@protonmail.com', 'Name': 'Alejandro Velez', 'Status': 'ACTIVE', 'Jo
+inedMethod': 'INVITED', 'JoinedTimestamp': datetime.datetime(2021, 1, 12, 11, 39, 39, 270000, tzinfo=tzlocal())}, {'Id': '571340586587', 'Arn': 'arn:aws:organizations::029921763173:acc
+ount/o-9tlhkjyoii/571340586587', 'Email': 'w.alejovl+dev-labs@gmail.com', 'Name': 'Dev', 'Status': 'ACTIVE', 'JoinedMethod': 'CREATED', 'JoinedTimestamp': datetime.datetime(2022, 9, 23
+, 23, 7, 28, 524000, tzinfo=tzlocal())}], 'ResponseMetadata': {'RequestId': '3ec74acf-2122-4d4b-9f8f-e1550df37a89', 'HTTPStatusCode': 200, 'HTTPHeaders': {'x-amzn-requestid': '3ec74acf-2122-4d4b-9f8f-e1550df37a89', 'content-type': 'application/x-amz-json-1.1', 'content-length': '1907', 'date': 'Sun, 09 Oct 2022 04:20:59 GMT'}, 'RetryAttempts': 0}}

@@ -1,0 +1,37 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+#[build-system]
+#requires = ["setuptools>=61.0"]
+#build-backend = "setuptools.build_meta"
+
+[project]
+name = "validate_aws_policies"
+version = "0.0.2"
+authors = [
+    { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
+]
+description = "A tool for scan policies using AWS access Analyzer and "
+readme = "README.md"
+license = { file = "LICENSE" }
+requires-python = ">=3.7"
+dependencies = [
+    "colorama",
+    "pdfkit",
+    "json2html",
+    "argparse",
+    "zipp",
+]
+
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+
+[project.urls]
+"Homepage" = "https://github.com/pypa/sampleproject"
+"Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
+
+[project.scripts]
+validate-aws-policies = "validate_aws_policies.validate_policies:main"

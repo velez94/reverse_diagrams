@@ -1,4 +1,4 @@
-from graph_template import graph_template, graph_template_sso
+from .graph_template import graph_template, graph_template_sso
 
 root = 'r-w3ow'
 org_data = {'Id': 'o-9tlhkjyoii', 'Arn': 'arn:aws:organizations::029921763173:organization/o-9tlhkjyoii',
@@ -80,7 +80,7 @@ def find_ou_name(ous, search_id):
             return a["Name"]
 
 
-def create_mapper(template_file, org, root_id):
+def create_mapper(template_file, org, root_id, ous):
     with open(template_file, 'a') as f:
         ident = "        "
         print(f"\n    with Cluster('Organizations'):", file=f)
@@ -129,6 +129,6 @@ def create_sso_mapper(template_file):
 create_file(template_content=graph_template, file_name="graph_org.py")
 create_file(template_content=graph_template_sso, file_name="graph_sso.py")
 
-create_mapper(template_file="graph_org.py", org=org_data, root_id=root)
+#create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
 
 create_sso_mapper(template_file="graph_sso.py")

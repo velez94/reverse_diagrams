@@ -4,6 +4,7 @@ import logging
 from datetime import datetime
 from aws.describe_organization import describe_organization,\
     list_accounts, index_accounts, list_roots, list_organizational_units,index_ous
+from dgms.graph_mapper import create_mapper
 
 
 def main() -> int:
@@ -49,6 +50,9 @@ def main() -> int:
     print("The Account list with parents info")
     i_accounts= index_accounts(l_accounts)
     print(i_accounts)
+
+    create_mapper(template_file="graph_org.py", org=organization, root_id=roots[0]["Id"], ous=ous)
+
 
 
 

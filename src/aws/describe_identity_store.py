@@ -59,7 +59,7 @@ def complete_group_members(group_members,users_list):
                     u["MemberId"]["UserName"] = a["UserName"]
 
     return group_members
-
+"""
 
 boto3.setup_default_session(profile_name='labvel-master', region_name="us-east-2")
 client_identity = boto3.client('identitystore', region_name="us-east-2")
@@ -84,3 +84,5 @@ print(l_users)
 c_users_and_groups = complete_group_members(m_groups,l_users)
 
 print(c_users_and_groups)
+
+"""

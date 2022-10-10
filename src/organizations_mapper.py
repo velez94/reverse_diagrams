@@ -51,7 +51,7 @@ def main() -> int:
     i_accounts= index_accounts(l_accounts)
     print(i_accounts)
 
-    create_mapper(template_file="graph_org.py", org=organization, root_id=roots[0]["Id"], ous=ous)
+    create_mapper(template_file="graph_org.py", org=organization, root_id=roots[0]["Id"], ous=ous, accounts=i_accounts)
 
 
 

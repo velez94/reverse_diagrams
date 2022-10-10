@@ -80,7 +80,7 @@ def find_ou_name(ous, search_id):
             return a["Name"]
 
 
-def create_mapper(template_file, org, root_id, ous):
+def create_mapper(template_file, org, root_id, ous, accounts):
     with open(template_file, 'a') as f:
         ident = "        "
         print(f"\n    with Cluster('Organizations'):", file=f)
@@ -127,8 +127,8 @@ def create_sso_mapper(template_file):
 
 
 create_file(template_content=graph_template, file_name="graph_org.py")
-create_file(template_content=graph_template_sso, file_name="graph_sso.py")
+#create_file(template_content=graph_template_sso, file_name="graph_sso.py")
 
 #create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
 
-create_sso_mapper(template_file="graph_sso.py")
+#create_sso_mapper(template_file="graph_sso.py")

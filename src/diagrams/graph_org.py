@@ -14,34 +14,42 @@ with Diagram("Organizations-SSO-State", show=False, direction="TB"):
 
         oo = Organizations('o-9tlhkjyoii\n029921763173\nr-w3ow')
 
-        ou_0= OrganizationsOrganizationalUnit("ou-w3ow-93hiq3zr")
+        ou_Research= OrganizationsOrganizationalUnit("ou-w3ow-oegm0al0\nResearch")
 
-        oo>> ou_0
+        oo>> ou_Research
 
-        ou_1= OrganizationsOrganizationalUnit("ou-w3ow-5qsqi8b5")
+        ou_Dev= OrganizationsOrganizationalUnit("ou-w3ow-k24p2opx\nDev")
 
-        oo>> ou_1
+        oo>> ou_Dev
 
-        ou_2= OrganizationsOrganizationalUnit("ou-w3ow-w7dzhzcz")
+        ou_Core= OrganizationsOrganizationalUnit("ou-w3ow-93hiq3zr\nCore")
 
-        oo>> ou_2
+        oo>> ou_Core
 
-        ou_3= OrganizationsOrganizationalUnit("ou-w3ow-k24p2opx")
+        ou_Custom= OrganizationsOrganizationalUnit("ou-w3ow-5qsqi8b5\nCustom")
 
-        oo>> ou_3
+        oo>> ou_Custom
 
-        ou_0>> OrganizationsAccount("884478634998\nLog archive")
+        ou_Shared= OrganizationsOrganizationalUnit("ou-w3ow-w7dzhzcz\nShared")
 
-        ou_1>> OrganizationsAccount("582441254763\nProd")
+        oo>> ou_Shared
 
-        ou_0>> OrganizationsAccount("895882538541\nAudit")
+        ou_NetstedOU= OrganizationsOrganizationalUnit("ou-w3ow-i9xzgb9x\nNetstedOU")
 
-        ou_2>> OrganizationsAccount("105171185823\nDevSecOps")
+        ou_Custom>> ou_NetstedOU
 
-        ou_3>> OrganizationsAccount("994261317734\nLabVelCT")
+        ou_Core>> OrganizationsAccount("884478634998\nLog archive")
 
-        ou_2>> OrganizationsAccount("155794986228\nSharedServices")
+        ou_Custom>> OrganizationsAccount("582441254763\nProd")
+
+        ou_Core>> OrganizationsAccount("895882538541\nAudit")
+
+        ou_Shared>> OrganizationsAccount("105171185823\nDevSecOps")
+
+        ou_Dev>> OrganizationsAccount("994261317734\nLabVelCT")
+
+        ou_Shared>> OrganizationsAccount("155794986228\nSharedServices")
 
         oo >> OrganizationsAccount("029921763173\nAlejandro Velez")
 
-        ou_3>> OrganizationsAccount("571340586587\nDev")
+        ou_Dev>> OrganizationsAccount("571340586587\nDev")

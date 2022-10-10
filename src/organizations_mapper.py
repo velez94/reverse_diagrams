@@ -2,7 +2,8 @@ import boto3
 import argparse
 import logging
 from datetime import datetime
-from aws.describe_organization import describe_organization, list_accounts, index_accounts, get_ous
+from aws.describe_organization import describe_organization,\
+    list_accounts, index_accounts, list_roots, list_organizational_units,index_ous
 
 
 def main() -> int:
@@ -28,19 +29,27 @@ def main() -> int:
         if profile is not None:
             boto3.setup_default_session(profile_name=profile)
         logging.info(f"Profile is: {profile}")
+
     client = boto3.client('organizations')
     organization = describe_organization(client)
     print("The Organization info")
     print(organization)
+    print("The Roots Info")
+    roots=list_roots(client=client)
+    print(roots)
+    print("The Organizational Units list ")
+    ous=list_organizational_units(parent_id=roots[0]["Id"],client= client)
+    print(ous)
+    print("The Organizational Units list with parents info")
+    i_ous= index_ous(ous,client=client)
+    print(i_ous)
     print("The Account list info")
     l_accounts=list_accounts(client)
     print(l_accounts)
     print("The Account list with parents info")
     i_accounts= index_accounts(l_accounts)
     print(i_accounts)
-    print("The Organizational Units list ")
-    l_ous= get_ous(i_accounts)
-    print(l_ous[0], l_ous[1])
+
 
 
 if __name__ == '__main__':

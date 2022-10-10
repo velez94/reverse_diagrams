@@ -3,18 +3,73 @@ import json
 
 
 def describe_organization(client=boto3.client('organizations')):
-    response = client.describe_organization()
-    organization = response["Organization"]
+    organization = client.describe_organization()
+    organization = organization["Organization"]
     return organization
 
 
+def list_roots(client=boto3.client('organizations')):
+    roots = client.list_roots(
+        # NextToken='string',
+        # MaxResults=123
+    )
+    return roots["Roots"]
+
+
+def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units=[]):
+    paginator = client.get_paginator('list_organizational_units_for_parent')
+    # ous= paginator.paginate(ParentId=parent_id,
+    ous = client.list_organizational_units_for_parent(
+        ParentId=parent_id,
+        # NextToken='string',
+        # MaxResults=123
+    )
+    for o in ous["OrganizationalUnits"]:
+        org_units.append(o)
+    print("The parent Id is: ", parent_id)
+    print(ous)
+    if len(ous) > 0:
+        for ou in ous["OrganizationalUnits"]:
+            print(ou)
+            if "Id" in ou.keys():
+                print("Search nested for: ", ou["Name"])
+                ous_next = list_organizational_units(ou["Id"], client=client, org_units=org_units)
+                print(ous_next)
+                if len(ous_next) > 0:
+                    print("Find NetsteD")
+
+    return org_units
+
+
+def list_parents(child_id, client=boto3.client('organizations')):
+    response = client.list_parents(
+        ChildId=child_id,
+        # NextToken='string',
+        # MaxResults=123
+    )
+    return response["Parents"]
+
+
+def index_ous(list_ous, client=boto3.client('organizations')):
+    for ou in list_ous:
+        if "Id" in ou.keys() and len(ou) > 0:
+            response = client.list_parents(
+                ChildId=ou["Id"],
+                # NextToken='string',
+                # MaxResults=123
+            )
+            print(response["Parents"])
+            ou["Parents"] = response["Parents"]
+    return list_ous
+
+
 def list_accounts(client=boto3.client('organizations')):
-    response = client.list_accounts(
+    accounts = client.list_accounts(
         # NextToken='string',
         # MaxResults=123
     )
 
-    return response["Accounts"]
+    return accounts["Accounts"]
 
 
 def index_accounts(list_account):
@@ -26,22 +81,7 @@ def index_accounts(list_account):
             # NextToken='string',
             # MaxResults=123
         )
-        print(response)
+        # print(response)
 
         accounts.append({"account": a["Id"], "name": a["Name"], "parents": response["Parents"]})
     return accounts
-
-
-def get_ous(accounts):
-    ous = []
-    root = ""
-    for p in accounts:
-        for a in p["parents"]:
-            if a["Id"] in ous and a["Type"] != "ROOT":
-                continue
-
-            elif (a["Id"] in ous) == False and a["Type"] == "ROOT":
-                root = a["Id"]
-            else:
-                ous.append(a["Id"])
-    return ous, root

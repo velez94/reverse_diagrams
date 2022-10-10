@@ -8,24 +8,37 @@ org_data = {'Id': 'o-9tlhkjyoii', 'Arn': 'arn:aws:organizations::029921763173:or
             'MasterAccountEmail': 'velez94@protonmail.com',
             'AvailablePolicyTypes': [{'Type': 'SERVICE_CONTROL_POLICY', 'Status': 'ENABLED'}]}
 
-ous = ['ou-w3ow-93hiq3zr', 'ou-w3ow-5qsqi8b5', 'ou-w3ow-w7dzhzcz', 'ou-w3ow-k24p2opx']
-accounts = [{'account': '884478634998', 'name': 'Log archive',
-             'parents': [{'Id': 'ou-w3ow-93hiq3zr', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '582441254763', 'name': 'Prod',
-             'parents': [{'Id': 'ou-w3ow-5qsqi8b5', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '895882538541', 'name': 'Audit',
-             'parents': [{'Id': 'ou-w3ow-93hiq3zr', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '105171185823', 'name': 'DevSecOps',
-             'parents': [{'Id': 'ou-w3ow-w7dzhzcz', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '994261317734', 'name': 'LabVelCT',
-             'parents': [{'Id': 'ou-w3ow-k24p2opx', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '155794986228', 'name': 'SharedServices',
-             'parents': [{'Id': 'ou-w3ow-w7dzhzcz', 'Type': 'ORGANIZATIONAL_UNIT'}]},
-            {'account': '029921763173', 'name': 'Alejandro Velez', 'parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
-            {'account': '571340586587', 'name': 'Dev',
-             'parents': [{'Id': 'ou-w3ow-k24p2opx', 'Type': 'ORGANIZATIONAL_UNIT'}]}]
 
-Gg = [{"gg": "1", "as": ["A1", "A2", "A5"]}, {"gg": "2", "as": ["A3", "A2", "A1"]}]
+ous = [
+    {'Id': 'ou-w3ow-oegm0al0', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-oegm0al0',
+     'Name': 'Research', 'Parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'Id': 'ou-w3ow-k24p2opx', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-k24p2opx',
+     'Name': 'Dev', 'Parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'Id': 'ou-w3ow-93hiq3zr', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-93hiq3zr',
+     'Name': 'Core', 'Parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'Id': 'ou-w3ow-5qsqi8b5', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-5qsqi8b5',
+     'Name': 'Custom', 'Parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'Id': 'ou-w3ow-w7dzhzcz', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-w7dzhzcz',
+     'Name': 'Shared', 'Parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'Id': 'ou-w3ow-i9xzgb9x', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-i9xzgb9x',
+     'Name': 'NetstedOU', 'Parents': [{'Id': 'ou-w3ow-5qsqi8b5', 'Type': 'ORGANIZATIONAL_UNIT'}]}]
+
+accounts = [
+    {'account': '884478634998', 'name': 'Log archive',
+     'parents': [{'Id': 'ou-w3ow-93hiq3zr', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '582441254763', 'name': 'Prod',
+     'parents': [{'Id': 'ou-w3ow-5qsqi8b5', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '895882538541', 'name': 'Audit',
+     'parents': [{'Id': 'ou-w3ow-93hiq3zr', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '105171185823', 'name': 'DevSecOps',
+     'parents': [{'Id': 'ou-w3ow-w7dzhzcz', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '994261317734', 'name': 'LabVelCT',
+     'parents': [{'Id': 'ou-w3ow-k24p2opx', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '155794986228', 'name': 'SharedServices',
+     'parents': [{'Id': 'ou-w3ow-w7dzhzcz', 'Type': 'ORGANIZATIONAL_UNIT'}]},
+    {'account': '029921763173', 'name': 'Alejandro Velez', 'parents': [{'Id': 'r-w3ow', 'Type': 'ROOT'}]},
+    {'account': '571340586587', 'name': 'Dev',
+     'parents': [{'Id': 'ou-w3ow-k24p2opx', 'Type': 'ORGANIZATIONAL_UNIT'}]}]
 
 groups = [
     {'group_id': '9a672b3314-f46f413e-44d7-4d3d-918b-f86721413097', 'group_name': 'AWSSecurityAuditors', 'members': []},
@@ -61,14 +74,25 @@ def create_file(template_content, file_name):
     f.close()
 
 
+def find_ou_name(ous, search_id):
+    for a in ous:
+        if a["Id"] == search_id:
+            return a["Name"]
+
+
 def create_mapper(template_file, org, root_id):
     with open(template_file, 'a') as f:
         ident = "        "
         print(f"\n    with Cluster('Organizations'):", file=f)
         print(f"\n{ident}oo = Organizations('{org['Id']}\\n{org['MasterAccountId']}\\n{root_id}')", file=f)
         for a, i in zip(ous, range(len(ous))):
-            print(f"\n{ident}ou_{i}= OrganizationsOrganizationalUnit(\"{a}\")", file=f)
-            print(f"\n{ident}oo>> ou_{i}", file=f)
+            print(f"\n{ident}ou_{a['Name']}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")", file=f)
+
+            for p in a["Parents"]:
+                if p['Type'] == 'ROOT':
+                    print(f"\n{ident}oo>> ou_{a['Name']}", file=f)
+                if p['Type'] == 'ORGANIZATIONAL_UNIT':
+                    print(f"\n{ident}ou_{find_ou_name(ous,p['Id'])}>> ou_{a['Name']}", file=f)
 
         for c, i in zip(accounts, range(len(accounts))):
             # print(f"\n    aa_{i}= OrganizationsAccount(\"{c['account']}\")", file=f)
@@ -77,8 +101,8 @@ def create_mapper(template_file, org, root_id):
                     print(f"\n{ident}oo >> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")", file=f)
 
                 for o, j in zip(ous, range(len(ous))):
-                    if p['Id'] == o and p['Type'] == 'ORGANIZATIONAL_UNIT':
-                        print(f"\n{ident}ou_{j}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")", file=f)
+                    if p['Id'] == o["Id"] and p['Type'] == 'ORGANIZATIONAL_UNIT':
+                        print(f"\n{ident}ou_{o['Name']}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")", file=f)
 
         f.close()
 
@@ -89,15 +113,14 @@ def create_sso_mapper(template_file):
         print(f"\n    with Cluster('Groups'):", file=f)
         for g, l in zip(groups, range(len(groups))):
 
-            if len(g["members"])>0:
+            if len(g["members"]) > 0:
                 print(f"\n{ident}with Cluster(\"{g['group_name']}\"):", file=f)
                 users = "["
                 for m in g["members"]:
-
                     user_name = m["MemberId"]["UserName"]
-                    users+= f"User(\"{user_name}\"),"
-                    #print(f"\n{ident}gg_{l}>> User(\"{user_name}\")", file=f)
-                users+="]"
+                    users += f"User(\"{user_name}\"),"
+                    # print(f"\n{ident}gg_{l}>> User(\"{user_name}\")", file=f)
+                users += "]"
                 print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
             else:
                 print(f"\n{ident}gg_{l}= Users(\"{g['group_name']}\")", file=f)

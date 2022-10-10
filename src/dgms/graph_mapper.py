@@ -127,7 +127,7 @@ def create_sso_mapper(template_file):
 
 
 create_file(template_content=graph_template, file_name="graph_org.py")
-#create_file(template_content=graph_template_sso, file_name="graph_sso.py")
+create_file(template_content=graph_template_sso, file_name="graph_sso.py")
 
 #create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
 

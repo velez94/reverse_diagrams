@@ -6,7 +6,7 @@ build-backend = "hatchling.build"
 #build-backend = "setuptools.build_meta"
 
 [project]
-name = "validate_aws_policies"
+name = "reverse_diagrams"
 version = "0.0.2"
 authors = [
     { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
@@ -16,11 +16,9 @@ readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.7"
 dependencies = [
-    "colorama",
-    "pdfkit",
-    "json2html",
-    "argparse",
-    "zipp",
+    "json",
+    "pandas",
+
 ]
 
 classifiers = [
@@ -34,4 +32,4 @@ classifiers = [
 "Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
 
 [project.scripts]
-validate-aws-policies = "validate_aws_policies.validate_policies:main"
+reverse_diagrams = "src.reverse_diagram:main"

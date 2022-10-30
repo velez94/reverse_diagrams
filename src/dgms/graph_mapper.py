@@ -1,4 +1,4 @@
-from graph_template import graph_template, graph_template_sso, graph_template_sso_complete
+from .graph_template import graph_template, graph_template_sso, graph_template_sso_complete
 import re
 
 root = 'r-w3ow'
@@ -156,16 +156,18 @@ def create_sso_mapper_complete(template_file, acc_assignments):
                               f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
                               f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
                               file=f)
+                        #print(f"\n{ident}ou >> gg_{m['GroupName']}\n", file=f)
                     if "UserName" in m.keys():
                         # groups += f"Users(\"{m['GroupName']}\"),"
                         # groups += "]"
                         print(f"\n{ident}with Cluster('User: {m['UserName']}'):", file=f)
-                        print(f"\n{ident}{ident}gg_{format_string(m['UserName'])}=Users(\"{format_name_string(m['UserName'])}\")\n"
-                              f"{ident}{ident}gg_{format_string(m['UserName'])} \\\n"
+                        print(f"\n{ident}{ident}uu_{format_string(m['UserName'])}=User(\"{format_name_string(m['UserName'])}\")\n"
+                              f"{ident}{ident}uu_{format_string(m['UserName'])} \\\n"
                               f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
                               f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
                               file=f)
-
+                        #print(f"\n{ident}ou >> uu_{format_string(m['UserName'])}\n", file=f)
+    f.close()
 
 def create_file(template_content, file_name):
     with open(file_name, 'w') as f:
@@ -207,30 +209,29 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
         f.close()
 
 
-def create_sso_mapper(template_file):
+def create_sso_mapper(template_file, group_and_members):
     with open(template_file, 'a') as f:
         ident = "        "
         print(f"\n    with Cluster('Groups'):", file=f)
-        for g, l in zip(groups, range(len(groups))):
+        for g, l in zip(group_and_members, range(len(group_and_members))):
 
             if len(g["members"]) > 0:
                 print(f"\n{ident}with Cluster(\"{g['group_name']}\"):", file=f)
                 users = "["
                 for m in g["members"]:
                     user_name = m["MemberId"]["UserName"]
-                    users += f"User(\"{user_name}\"),"
+                    users += f"User(\"{format_name_string(user_name)}\"),"
                     # print(f"\n{ident}gg_{l}>> User(\"{user_name}\")", file=f)
                 users += "]"
                 print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
             else:
-                print(f"\n{ident}gg_{l}= Users(\"{g['group_name']}\")", file=f)
+                print(f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'])}\")", file=f)
 
 
 create_file(template_content=graph_template, file_name="graph_org.py")
 create_file(template_content=graph_template_sso, file_name="graph_sso.py")
 create_file(template_content=graph_template_sso_complete, file_name="graph_sso_complete.py")
 
-create_sso_mapper_complete(template_file="graph_sso_complete.py", acc_assignments=account_assignments)
 # create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
 
-# create_sso_mapper(template_file="graph_sso.py")
+

@@ -16,7 +16,7 @@ from diagrams import Diagram, Cluster
 from diagrams.aws.management import Organizations, OrganizationsAccount, OrganizationsOrganizationalUnit
 from diagrams.aws.general import Users, User
 
-with Diagram("SSO-State", show=False, direction="RL"):
+with Diagram("SSO-State", show=False, direction="TB"):
     gg = Users("Group")
     uu= User("User")
 """
@@ -28,10 +28,8 @@ from diagrams.aws.management import Organizations, OrganizationsAccount, Organiz
 from diagrams.aws.general import Users, User
 from diagrams.aws.security import IAMPermissions
 with Diagram("IAM Identity Center", show=False, direction="LR"):
-    oo = Organizations("Organization")
-    ou = OrganizationsOrganizationalUnit("OrganizationalUnit")
-    oa = OrganizationsAccount("Account")
     gg = Users("Group")
     uu = User("User")
     pp= IAMPermissions("PermissionsSet")
+    ou = OrganizationsOrganizationalUnit("PermissionsAssignments")
 """

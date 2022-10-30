@@ -1,4 +1,5 @@
-from .graph_template import graph_template, graph_template_sso
+from graph_template import graph_template, graph_template_sso, graph_template_sso_complete
+import re
 
 root = 'r-w3ow'
 org_data = {'Id': 'o-9tlhkjyoii', 'Arn': 'arn:aws:organizations::029921763173:organization/o-9tlhkjyoii',
@@ -7,7 +8,6 @@ org_data = {'Id': 'o-9tlhkjyoii', 'Arn': 'arn:aws:organizations::029921763173:or
             'MasterAccountId': '029921763173',
             'MasterAccountEmail': 'velez94@protonmail.com',
             'AvailablePolicyTypes': [{'Type': 'SERVICE_CONTROL_POLICY', 'Status': 'ENABLED'}]}
-
 
 ous = [
     {'Id': 'ou-w3ow-oegm0al0', 'Arn': 'arn:aws:organizations::029921763173:ou/o-9tlhkjyoii/ou-w3ow-oegm0al0',
@@ -66,8 +66,107 @@ groups = [
          'MemberId': {'UserId': '9a672b3314-bd21c8b3-1aa0-4922-9374-92321b4979bf',
                       'UserName': 'velez94@protonmail.com'}}]}]
 
+account_assignments = {'Master': [{'AccountId': '029921763173',
+                                   'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-ab185f05acde5e90',
+                                   'PrincipalType': 'GROUP',
+                                   'PrincipalId': '9a672b3314-b858476a-2ef9-4018-90e7-29e5e4bc4388',
+                                   'GroupName': 'AWSSecurityAuditPowerUsers',
+                                   'PermissionSetName': 'AWSPowerUserAccess'},
+                                  {'AccountId': '029921763173',
+                                   'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-7cc34a5a03379f6f',
+                                   'PrincipalType': 'GROUP',
+                                   'PrincipalId': '9a672b3314-f8065505-3174-4d46-a1b4-f134fd0ca2fc',
+                                   'GroupName': 'AWSAccountFactory',
+                                   'PermissionSetName': 'AWSServiceCatalogEndUserAccess'},
+                                  {'AccountId': '029921763173',
+                                   'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-21058a9d1f62c7e2',
+                                   'PrincipalType': 'GROUP',
+                                   'PrincipalId': '9a672b3314-43117aac-887b-48ee-af49-b6b6cd059199',
+                                   'GroupName': 'AWSControlTowerAdmins', 'PermissionSetName': 'AWSAdministratorAccess'},
+                                  {'AccountId': '029921763173',
+                                   'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-cf27b0efdc941a09',
+                                   'PrincipalType': 'GROUP',
+                                   'PrincipalId': '9a672b3314-f46f413e-44d7-4d3d-918b-f86721413097',
+                                   'GroupName': 'AWSSecurityAuditors', 'PermissionSetName': 'AWSReadOnlyAccess'},
+                                  {'AccountId': '029921763173',
+                                   'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-83e7c23c8b2df8b3',
+                                   'PrincipalType': 'GROUP',
+                                   'PrincipalId': '9a672b3314-7f743f07-169a-4172-bdbc-561e7908e463',
+                                   'GroupName': 'AWSServiceCatalogAdmins',
+                                   'PermissionSetName': 'AWSServiceCatalogAdminFullAccess'}],
+                       'DevSecOps': [
+                           {'AccountId': '105171185823',
+                            'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-ab185f05acde5e90',
+                            'PrincipalType': 'GROUP', 'PrincipalId': '9a672b3314-b858476a-2ef9-4018-90e7-29e5e4bc4388',
+                            'GroupName': 'AWSSecurityAuditPowerUsers', 'PermissionSetName': 'AWSPowerUserAccess'},
+                           {'AccountId': '105171185823',
+                            'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-21058a9d1f62c7e2',
+                            'PrincipalType': 'GROUP', 'PrincipalId': '318bc590-a071-70f5-63f6-ab21233e4e33',
+                            'GroupName': 'DevSecOps_Admins',
+                            'PermissionSetName': 'AWSAdministratorAccess'},
+                           {'AccountId': '105171185823',
+                            'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-21058a9d1f62c7e2',
+                            'PrincipalType': 'USER',
+                            'PrincipalId': '81bb65b0-40f1-7082-2b16-83138563c37b',
+                            'UserName': 'w.alejovl+devsecops-labs@gmail.com',
+                            'PermissionSetName': 'AWSAdministratorAccess'},
+                           {'AccountId': '105171185823',
+                            'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-cf27b0efdc941a09',
+                            'PrincipalType': 'GROUP', 'PrincipalId': '9a672b3314-f46f413e-44d7-4d3d-918b-f86721413097',
+                            'GroupName': 'AWSSecurityAuditors', 'PermissionSetName': 'AWSReadOnlyAccess'},
+                           {'AccountId': '105171185823',
+                            'PermissionSetArn': 'arn:aws:sso:::permissionSet/ssoins-66845289d6823727/ps-c6046bbbf15aaafc',
+                            'PrincipalType': 'GROUP',
+                            'PrincipalId': '9a672b3314-43117aac-887b-48ee-af49-b6b6cd059199',
+                            'GroupName': 'AWSControlTowerAdmins',
+                            'PermissionSetName': 'AWSOrganizationsFullAccess'}]}
 
-#  Upload manifest file
+from diagrams.aws.general import Users, User
+
+
+def format_name_string(name):
+    if len(name) > 17:
+        name = name[:16] + "\\n" + name[16:]
+    return name
+
+
+def format_string(a_string):
+    a_string = re.sub('[-!?@.+]', '', a_string)
+    return a_string
+
+
+def create_sso_mapper_complete(template_file, acc_assignments):
+    with open(template_file, 'a') as f:
+        ident = "        "
+
+        for key, value in acc_assignments.items():
+            print(f"\n    with Cluster('Account: {key}'):", file=f)
+            if len(value) > 0:
+                # print(value[0])
+                # groups = "groups= ["
+                for m in value:
+                    print(m)
+
+                    if "GroupName" in m.keys():
+                        # groups += f"Users(\"{m['GroupName']}\"),"
+                        # groups += "]"
+                        print(f"\n{ident}with Cluster('Group: {m['GroupName']}'):", file=f)
+                        print(f"\n{ident}{ident}gg_{m['GroupName']}=Users(\"{format_name_string(m['GroupName'])}\")\n"
+                              f"{ident}{ident}gg_{m['GroupName']} \\\n"
+                              f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
+                              f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
+                              file=f)
+                    if "UserName" in m.keys():
+                        # groups += f"Users(\"{m['GroupName']}\"),"
+                        # groups += "]"
+                        print(f"\n{ident}with Cluster('User: {m['UserName']}'):", file=f)
+                        print(f"\n{ident}{ident}gg_{format_string(m['UserName'])}=Users(\"{format_name_string(m['UserName'])}\")\n"
+                              f"{ident}{ident}gg_{format_string(m['UserName'])} \\\n"
+                              f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
+                              f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
+                              file=f)
+
+
 def create_file(template_content, file_name):
     with open(file_name, 'w') as f:
         f.write(template_content)
@@ -80,29 +179,30 @@ def find_ou_name(ous, search_id):
             return a["Name"]
 
 
-def create_mapper(template_file, org, root_id, ous, accounts):
+def create_mapper(template_file, org, root_id, list_ous, list_accounts):
     with open(template_file, 'a') as f:
         ident = "        "
         print(f"\n    with Cluster('Organizations'):", file=f)
         print(f"\n{ident}oo = Organizations('{org['Id']}\\n{org['MasterAccountId']}\\n{root_id}')", file=f)
-        for a, i in zip(ous, range(len(ous))):
+        for a, i in zip(list_ous, range(len(list_ous))):
             print(f"\n{ident}ou_{a['Name']}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")", file=f)
 
             for p in a["Parents"]:
                 if p['Type'] == 'ROOT':
                     print(f"\n{ident}oo>> ou_{a['Name']}", file=f)
                 if p['Type'] == 'ORGANIZATIONAL_UNIT':
-                    print(f"\n{ident}ou_{find_ou_name(ous,p['Id'])}>> ou_{a['Name']}", file=f)
+                    print(f"\n{ident}ou_{find_ou_name(list_ous, p['Id'])}>> ou_{a['Name']}", file=f)
 
-        for c, i in zip(accounts, range(len(accounts))):
+        for c, i in zip(list_accounts, range(len(list_accounts))):
             # print(f"\n    aa_{i}= OrganizationsAccount(\"{c['account']}\")", file=f)
             for p in c["parents"]:
                 if p['Type'] == 'ROOT':
                     print(f"\n{ident}oo >> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")", file=f)
 
-                for o, j in zip(ous, range(len(ous))):
+                for o, j in zip(list_ous, range(len(list_ous))):
                     if p['Id'] == o["Id"] and p['Type'] == 'ORGANIZATIONAL_UNIT':
-                        print(f"\n{ident}ou_{o['Name']}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")", file=f)
+                        print(f"\n{ident}ou_{o['Name']}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")",
+                              file=f)
 
         f.close()
 
@@ -128,7 +228,9 @@ def create_sso_mapper(template_file):
 
 create_file(template_content=graph_template, file_name="graph_org.py")
 create_file(template_content=graph_template_sso, file_name="graph_sso.py")
+create_file(template_content=graph_template_sso_complete, file_name="graph_sso_complete.py")
 
-#create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
+create_sso_mapper_complete(template_file="graph_sso_complete.py", acc_assignments=account_assignments)
+# create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)
 
-#create_sso_mapper(template_file="graph_sso.py")
+# create_sso_mapper(template_file="graph_sso.py")

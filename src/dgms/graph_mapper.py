@@ -132,6 +132,7 @@ def format_name_string(name):
 
 def format_string(a_string):
     a_string = re.sub('[-!?@.+]', '', a_string)
+    a_string =  a_string.replace(" ",'')
     return a_string
 
 
@@ -187,11 +188,11 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
         print(f"\n    with Cluster('Organizations'):", file=f)
         print(f"\n{ident}oo = Organizations('{org['Id']}\\n{org['MasterAccountId']}\\n{root_id}')", file=f)
         for a, i in zip(list_ous, range(len(list_ous))):
-            print(f"\n{ident}ou_{a['Name']}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")", file=f)
+            print(f"\n{ident}ou_{format_string(a['Name'])}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")", file=f)
 
             for p in a["Parents"]:
                 if p['Type'] == 'ROOT':
-                    print(f"\n{ident}oo>> ou_{a['Name']}", file=f)
+                    print(f"\n{ident}oo>> ou_{format_string(a['Name'])}", file=f)
                 if p['Type'] == 'ORGANIZATIONAL_UNIT':
                     print(f"\n{ident}ou_{find_ou_name(list_ous, p['Id'])}>> ou_{a['Name']}", file=f)
 

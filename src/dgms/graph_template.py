@@ -7,8 +7,6 @@ from diagrams.aws.general import Users, User
 with Diagram("Organizations-SSO-State", show=False, direction="TB"):
     ou = OrganizationsOrganizationalUnit("OU")
     oa = OrganizationsAccount("Account")
-    gg = Users("Group")
-    uu= User("User")
 """
 graph_template_sso= """
 from diagrams import Diagram, Cluster

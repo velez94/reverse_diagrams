@@ -124,11 +124,14 @@ account_assignments = {'Master': [{'AccountId': '029921763173',
 from diagrams.aws.general import Users, User
 
 
-def format_name_string(a_string):
-    if len(a_string) > 17:
-        name = a_string[:16] + "\\n" + a_string[16:]
-    a_string = re.sub('[-!?@.+]', '', a_string)
-    a_string = a_string.replace(" ", '')
+def format_name_string(a_string, action=None):
+    if action == 'split':
+        if len(a_string) > 17:
+            a_string = a_string[:16] + "\\n" + a_string[16:]
+    elif action== 'format':
+
+        a_string = re.sub('[-!?@.+]', '', a_string)
+        a_string = a_string.replace(" ", '')
     return a_string
 
 
@@ -148,10 +151,10 @@ def create_sso_mapper_complete(template_file, acc_assignments):
                         # groups += f"Users(\"{m['GroupName']}\"),"
                         # groups += "]"
                         print(f"\n{ident}with Cluster('Group: {m['GroupName']}'):", file=f)
-                        print(f"\n{ident}{ident}gg_{m['GroupName']}=Users(\"{format_name_string(m['GroupName'])}\")\n"
-                              f"{ident}{ident}gg_{m['GroupName']} \\\n"
+                        print(f"\n{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')}=Users(\"{format_name_string(m['GroupName'],'split')}\")\n"
+                              f"{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')} \\\n"
                               f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
-                              f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
+                              f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'], 'split')}\")",
                               file=f)
                         # print(f"\n{ident}ou >> gg_{m['GroupName']}\n", file=f)
                     if "UserName" in m.keys():
@@ -159,10 +162,10 @@ def create_sso_mapper_complete(template_file, acc_assignments):
                         # groups += "]"
                         print(f"\n{ident}with Cluster('User: {m['UserName']}'):", file=f)
                         print(
-                            f"\n{ident}{ident}uu_{format_name_string(m['UserName'])}=User(\"{format_name_string(m['UserName'])}\")\n"
-                            f"{ident}{ident}uu_{format_name_string(m['UserName'])} \\\n"
+                            f"\n{ident}{ident}uu_{format_name_string(m['UserName'], 'format')}=User(\"{format_name_string(m['UserName'],'split')}\")\n"
+                            f"{ident}{ident}uu_{format_name_string(m['UserName'],'format')} \\\n"
                             f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
-                            f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'])}\")",
+                            f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'],'split')}\")",
                             file=f)
                         # print(f"\n{ident}ou >> uu_{format_name_string(m['UserName'])}\n", file=f)
     f.close()
@@ -187,14 +190,16 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
         print(f"\n{ident}oo = Organizations('{org['Id']}\\n{org['MasterAccountId']}\\n{root_id}')", file=f)
         for a, i in zip(list_ous, range(len(list_ous))):
             print(
-                f"\n{ident}ou_{format_name_string(a['Name'])}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")",
+                f"\n{ident}ou_{format_name_string(a['Name'], 'format')}= OrganizationsOrganizationalUnit(\"{a['Id']}\\n{a['Name']}\")",
                 file=f)
 
             for p in a["Parents"]:
                 if p['Type'] == 'ROOT':
-                    print(f"\n{ident}oo>> ou_{format_name_string(a['Name'])}", file=f)
+                    print(f"\n{ident}oo>> ou_{format_name_string(a['Name'],'format')}", file=f)
                 if p['Type'] == 'ORGANIZATIONAL_UNIT':
-                    print(f"\n{ident}ou_{format_name_string(find_ou_name(list_ous, p['Id']))}>> ou_{format_name_string(a['Name'])}", file=f)
+                    print(
+                        f"\n{ident}ou_{format_name_string(find_ou_name(list_ous, p['Id']),'format')}>> ou_{format_name_string(a['Name'],'format')}",
+                        file=f)
 
         for c, i in zip(list_accounts, range(len(list_accounts))):
             # print(f"\n    aa_{i}= OrganizationsAccount(\"{c['account']}\")", file=f)
@@ -204,8 +209,9 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
 
                 for o, j in zip(list_ous, range(len(list_ous))):
                     if p['Id'] == o["Id"] and p['Type'] == 'ORGANIZATIONAL_UNIT':
-                        print(f"\n{ident}ou_{format_name_string(o['Name'])}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")",
-                              file=f)
+                        print(
+                            f"\n{ident}ou_{format_name_string(o['Name'],'format')}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")",
+                            file=f)
 
         f.close()
 
@@ -221,12 +227,12 @@ def create_sso_mapper(template_file, group_and_members):
                 users = "["
                 for m in g["members"]:
                     user_name = m["MemberId"]["UserName"]
-                    users += f"User(\"{format_name_string(user_name)}\"),"
+                    users += f"User(\"{format_name_string(user_name,'split')}\"),"
                     # print(f"\n{ident}gg_{l}>> User(\"{user_name}\")", file=f)
                 users += "]"
                 print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
             else:
-                print(f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'])}\")", file=f)
+                print(f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'], 'split')}\")", file=f)
 
 
 create_file(template_content=graph_template, file_name="graph_org.py")

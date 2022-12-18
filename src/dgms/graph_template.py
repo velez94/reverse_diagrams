@@ -4,7 +4,7 @@ from diagrams import Diagram, Cluster
 from diagrams.aws.management import Organizations, OrganizationsAccount, OrganizationsOrganizationalUnit
 from diagrams.aws.general import Users, User
 
-with Diagram("Organizations-SSO-State", show=False, direction="TB"):
+with Diagram("Organizations-State", show=False, direction="TB"):
     ou = OrganizationsOrganizationalUnit("OU")
     oa = OrganizationsAccount("Account")
 """

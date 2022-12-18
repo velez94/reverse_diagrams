@@ -28,8 +28,35 @@ options:
 For example: 
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o 
+reverse_diagrams -c aws -p my-profile -o
+Date: 2022-12-17 22:33:21.791819
+🔄 Getting Organization Info
+🔄 The Organizational Units list 
+🔄 Getting the Account list info
+Run -> python3 graph_org.py 
+
 ```
+Then run `python3 graph_org.py` to create a png screenshot (`organizations-state.png`) for your current state.
+
+> Both files are saved into the current directory.
+
+```commandline
+$  reverse_diagrams -c aws -p labvel-master -o
+Date: 2022-12-17 22:44:07.623260
+🔄 Getting Organization Info
+🔄 The Organizational Units list 
+🔄 Getting the Account list info
+Run -> python3 graph_org.py 
+
+
+$ python3 graph_org.py 
+$ ls 
+graph_org.py
+organizations-state.png
+```
+For example:
+
+![Organizations Diagram](./docs/images/organizations-state-copy.png)
 
 # Cloud Providers
 ## AWS

@@ -1,4 +1,5 @@
 from colorama import Fore
+__version__ = "0.1.3"
 
 banner = """
 \t \t \t \t Reverse Diagrams 
@@ -50,9 +51,9 @@ banner = """
 """
 
 
-def get_version():
+def get_version(version):
     print(Fore.BLUE + banner )
-    __version__ = "0.1.0"
-    print(__version__ + Fore.RESET)
 
-    return __version__
+    print(version + Fore.RESET)
+
+    return version

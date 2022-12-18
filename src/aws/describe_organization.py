@@ -10,19 +10,15 @@ def describe_organization(client=boto3.client('organizations')):
 
 def list_roots(client=boto3.client('organizations')):
     roots = client.list_roots(
-        # NextToken='string',
-        # MaxResults=123
+
     )
     return roots["Roots"]
 
 
-def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units=[]):
-    paginator = client.get_paginator('list_organizational_units_for_parent')
-    # ous= paginator.paginate(ParentId=parent_id,
+def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units=None):
     ous = client.list_organizational_units_for_parent(
         ParentId=parent_id,
-        # NextToken='string',
-        # MaxResults=123
+
     )
     for o in ous["OrganizationalUnits"]:
         org_units.append(o)
@@ -44,8 +40,7 @@ def list_organizational_units(parent_id, client=boto3.client('organizations'), o
 def list_parents(child_id, client=boto3.client('organizations')):
     response = client.list_parents(
         ChildId=child_id,
-        # NextToken='string',
-        # MaxResults=123
+
     )
     return response["Parents"]
 
@@ -55,8 +50,7 @@ def index_ous(list_ous, client=boto3.client('organizations')):
         if "Id" in ou.keys() and len(ou) > 0:
             response = client.list_parents(
                 ChildId=ou["Id"],
-                # NextToken='string',
-                # MaxResults=123
+
             )
             print(response["Parents"])
             ou["Parents"] = response["Parents"]
@@ -65,8 +59,7 @@ def index_ous(list_ous, client=boto3.client('organizations')):
 
 def list_accounts(client=boto3.client('organizations')):
     accounts = client.list_accounts(
-        # NextToken='string',
-        # MaxResults=123
+
     )
 
     return accounts["Accounts"]
@@ -78,10 +71,8 @@ def index_accounts(list_account):
     for a in list_account:
         response = client.list_parents(
             ChildId=a["Id"],
-            # NextToken='string',
-            # MaxResults=123
+
         )
-        # print(response)
 
         accounts.append({"account": a["Id"], "name": a["Name"], "parents": response["Parents"]})
     return accounts

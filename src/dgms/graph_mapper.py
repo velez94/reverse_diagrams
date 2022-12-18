@@ -19,24 +19,21 @@ def create_sso_mapper_complete(template_file, acc_assignments):
         for key, value in acc_assignments.items():
             print(f"\n    with Cluster('Account: {key}'):", file=f)
             if len(value) > 0:
-                # print(value[0])
-                # groups = "groups= ["
+
                 for m in value:
                     print(m)
 
                     if "GroupName" in m.keys():
-                        # groups += f"Users(\"{m['GroupName']}\"),"
-                        # groups += "]"
+
                         print(f"\n{ident}with Cluster('Group: {m['GroupName']}'):", file=f)
                         print(f"\n{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')}=Users(\"{format_name_string(m['GroupName'],'split')}\")\n"
                               f"{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')} \\\n"
                               f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
                               f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'], 'split')}\")",
                               file=f)
-                        # print(f"\n{ident}ou >> gg_{m['GroupName']}\n", file=f)
+
                     if "UserName" in m.keys():
-                        # groups += f"Users(\"{m['GroupName']}\"),"
-                        # groups += "]"
+
                         print(f"\n{ident}with Cluster('User: {m['UserName']}'):", file=f)
                         print(
                             f"\n{ident}{ident}uu_{format_name_string(m['UserName'], 'format')}=User(\"{format_name_string(m['UserName'],'split')}\")\n"
@@ -105,12 +102,9 @@ def create_sso_mapper(template_file, group_and_members):
                 for m in g["members"]:
                     user_name = m["MemberId"]["UserName"]
                     users += f"User(\"{format_name_string(user_name,'split')}\"),"
-                    # print(f"\n{ident}gg_{l}>> User(\"{user_name}\")", file=f)
+
                 users += "]"
                 print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
             else:
                 print(f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'], 'split')}\")", file=f)
 
-
-
-# create_mapper(template_file="graph_org.py", org=org_data, root_id=root, ous=ous)

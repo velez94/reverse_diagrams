@@ -1,19 +1,12 @@
 import boto3
-from .describe_sso import list_instances, list_account_assignments, list_permissions_set, extends_permissions_set
+from .describe_sso import list_account_assignments
 import logging
 
 
 def list_groups(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
     response = client.list_groups(
         IdentityStoreId=identity_store_id,
-        # MaxResults=123,
-        # NextToken='string',
-        # Filters=[
-        #    {
-        #        'AttributePath': 'string',
-        #        'AttributeValue': 'string'
-        #    },
-        # ]
+
     )
 
     return response["Groups"]
@@ -22,14 +15,7 @@ def list_groups(identity_store_id, client=boto3.client('identitystore', region_n
 def list_users(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
     response = client.list_users(
         IdentityStoreId=identity_store_id,
-        # MaxResults=123,
-        # NextToken='string',
-        # Filters=[
-        #    {
-        #        'AttributePath': 'string',
-        #        'AttributeValue': 'string'
-        #    },
-        # ]
+
     )
 
     return response["Users"]
@@ -41,8 +27,7 @@ def get_members(identity_store_id, groups, client=boto3.client('identitystore', 
         response = client.list_group_memberships(
             IdentityStoreId=identity_store_id,
             GroupId=g["GroupId"],
-            # MaxResults=123,
-            # NextToken='string'
+
         )
         group_members.append(
             {"group_id": g["GroupId"],
@@ -68,12 +53,11 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn,
                                client_sso=boto3.client('identitystore', region_name="us-east-2")):
     account_assignments = []
     for p in permissions_sets:
-        # TODO make for each account
 
         for ac in accounts_list:
             assign = list_account_assignments(instance_arn=store_arn, account_id=ac["Id"], client=client_sso,
                                               permission_set_arn=p)
-            logging.debug("AccountAssignments ", assign)
+            logging.debug(f"AccountAssignments  {assign}")
             for a in assign:
                 account_assignments.append(a)
     return account_assignments

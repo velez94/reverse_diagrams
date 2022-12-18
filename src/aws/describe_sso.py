@@ -1,5 +1,5 @@
 import boto3
-
+import logging
 
 def list_instances(client=boto3.client('sso-admin', region_name="us-east-2")):
     response = client.list_instances(
@@ -27,7 +27,7 @@ def list_permissions_set(instance_arn, client=boto3.client('sso-admin', region_n
         InstanceArn=instance_arn,
 
     )
-    print(response)
+    logging.debug(response)
     return response["PermissionSets"]
 
 
@@ -37,7 +37,7 @@ def list_permission_provisioned(account_id, instance_arn, client=boto3.client('s
         AccountId=account_id,
 
     )
-    print(response)
+    logging.debug(response)
     return response["PermissionSets"]
 
 
@@ -51,5 +51,5 @@ def extends_permissions_set(permissions_sets, store_arn, client_sso=boto3.client
 
         l_permissions_set_arn_name[p] = response["PermissionSet"]["Name"]
 
-        print(response["PermissionSet"]["Name"])
+        logging.debug(response["PermissionSet"]["Name"])
     return l_permissions_set_arn_name

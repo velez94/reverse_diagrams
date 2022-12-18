@@ -1,5 +1,5 @@
 import boto3
-import json
+import logging
 
 
 def describe_organization(client=boto3.client('organizations')):
@@ -15,24 +15,25 @@ def list_roots(client=boto3.client('organizations')):
     return roots["Roots"]
 
 
-def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units=None):
+def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units= []):
     ous = client.list_organizational_units_for_parent(
         ParentId=parent_id,
 
     )
+
     for o in ous["OrganizationalUnits"]:
         org_units.append(o)
-    print("The parent Id is: ", parent_id)
-    print(ous)
+    logging.debug("The parent Id is: ", parent_id)
+    logging.debug(ous)
     if len(ous) > 0:
         for ou in ous["OrganizationalUnits"]:
-            print(ou)
+            logging.debug(ou)
             if "Id" in ou.keys():
-                print("Search nested for: ", ou["Name"])
+                logging.debug("Search nested for: ", ou["Name"])
                 ous_next = list_organizational_units(ou["Id"], client=client, org_units=org_units)
-                print(ous_next)
+                logging.debug(ous_next)
                 if len(ous_next) > 0:
-                    print("Find NetsteD")
+                    logging.debug("Find NetsteD")
 
     return org_units
 
@@ -52,7 +53,7 @@ def index_ous(list_ous, client=boto3.client('organizations')):
                 ChildId=ou["Id"],
 
             )
-            print(response["Parents"])
+            logging.debug(response["Parents"])
             ou["Parents"] = response["Parents"]
     return list_ous
 

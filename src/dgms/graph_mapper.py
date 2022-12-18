@@ -1,4 +1,4 @@
-from .graph_template import graph_template, graph_template_sso, graph_template_sso_complete
+import logging
 import re
 
 def format_name_string(a_string, action=None):
@@ -21,7 +21,7 @@ def create_sso_mapper_complete(template_file, acc_assignments):
             if len(value) > 0:
 
                 for m in value:
-                    print(m)
+                    logging.debug(m)
 
                     if "GroupName" in m.keys():
 

@@ -1,5 +1,6 @@
 import boto3
 from .describe_sso import list_account_assignments
+from colorama import Fore
 import logging
 
 
@@ -68,15 +69,15 @@ def add_users_and_groups_assign(account_assignments_list, user_and_group_list, u
     for a in account_assignments_list:
         for g in user_and_group_list:
             if len(a) > 0 and a['PrincipalType'] == 'GROUP' and g["group_id"] == a['PrincipalId']:
-                print(
-                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {g['group_name']} with permission set {list_permissions_set_arn_name[a['PermissionSetArn']]} or {a['PermissionSetArn']}")
+                print( Fore.YELLOW +
+                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {g['group_name']} with permission set {list_permissions_set_arn_name[a['PermissionSetArn']]} or {a['PermissionSetArn']}" + Fore.RESET)
 
                 a["GroupName"] = g['group_name']
                 a["PermissionSetName"] = list_permissions_set_arn_name[a['PermissionSetArn']]
         for u in user_list:
             if len(a) > 0 and a['PrincipalType'] == 'USER' and u["UserId"] == a['PrincipalId']:
-                print(
-                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {u['UserName']} with permission set {a['PermissionSetArn']} or {list_permissions_set_arn_name[a['PermissionSetArn']]}")
+                print(Fore.YELLOW +
+                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {u['UserName']} with permission set {a['PermissionSetArn']} or {list_permissions_set_arn_name[a['PermissionSetArn']]}"+ Fore.RESET)
                 a["UserName"] = u['UserName']
                 a["PermissionSetName"] = list_permissions_set_arn_name[a['PermissionSetArn']]
     logging.debug(f"Account Assignments --> {account_assignments_list}")

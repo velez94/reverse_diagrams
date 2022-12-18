@@ -6,6 +6,8 @@ This package create reverse diagrams  based on your current state in your cloud 
 
 # Use
 
+The following are the available options
+
 ```commandline
 $ reverse_diagrams -h 
 
@@ -23,12 +25,36 @@ options:
   -v, --version         Show version
 
 ```
+For example: 
+
+```commandline
+reverse_diagrams -c aws -p my-profile -o 
+```
 
 # Cloud Providers
 ## AWS
 
+### Requirement
+
+AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+
 ### Service supported
 
-- AWS Organizations
-- Identity and Access Manager Center (SSO)
+#### AWS Organizations
+
+```commandline
+reverse_diagrams -c aws -p my-profile -o 
+```
+#### Identity and Access Manager Center (SSO)
+
+```commandline
+reverse_diagrams -c aws -p my-profile -i 
+```
+## Additional Commands
+
+### Combine the options
+
+```commandline
+reverse_diagrams -c aws -p my-profile -o -i
+```
 

@@ -1,5 +1,5 @@
 from colorama import Fore
-__version__ = "0.1.3"
+
 
 banner = """
 \t \t \t \t Reverse Diagrams 

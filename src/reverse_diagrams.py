@@ -6,8 +6,8 @@ from datetime import datetime
 from .aws.describe_organization import describe_organization, \
     list_accounts, index_accounts, list_roots, list_organizational_units, index_ous
 from .aws.describe_identity_store import order_accounts_assignments_list, extend_account_assignments, \
-    list_permissions_set, list_groups, get_members, list_users, complete_group_members, add_users_and_groups_assign
-from .aws.describe_sso import list_instances, extends_permissions_set
+     list_groups, get_members, list_users, complete_group_members, add_users_and_groups_assign
+from .aws.describe_sso import list_instances, extends_permissions_set, list_permissions_set
 from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create_sso_mapper, create_file, \
     graph_template_sso_complete, graph_template, graph_template_sso
 from .banner.banner import get_version

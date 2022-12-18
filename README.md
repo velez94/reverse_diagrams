@@ -4,17 +4,17 @@
 
 This package create reverse diagrams  based on your current state in your cloud environment.
 
-# Cloud Providers
-## AWS
-
-### Service supported
-
+# Use
 
 ```commandline
-usage: reverse_diagrams [-h] [-p PROFILE] [-o] [-i] [-v]
+$ reverse_diagrams -h 
+
+usage: reverse_diagrams [-h] [-c CLOUD] [-p PROFILE] [-o] [-i] [-v]
 
 options:
   -h, --help            show this help message and exit
+  -c CLOUD, --cloud CLOUD
+                        Cloud Provider, aws, gcp, azure
   -p PROFILE, --profile PROFILE
                         AWS cli profile for Access Analyzer Api
   -o, --graph_organization
@@ -23,3 +23,12 @@ options:
   -v, --version         Show version
 
 ```
+
+# Cloud Providers
+## AWS
+
+### Service supported
+
+- AWS Organizations
+- Identity and Access Manager Center (SSO)
+

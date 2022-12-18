@@ -11,7 +11,9 @@ version = "0.1.0"
 authors = [
     { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
 ]
-description = "A tool for scan policies using AWS access Analyzer and "
+description = """ Continuous Documentation Tool - Documentation as Code Tool
+This package create reverse diagrams  based on your current state in your cloud environment.
+"""
 readme = "README.md"
 license = { file = "LICENSE" }
 requires-python = ">=3.8"

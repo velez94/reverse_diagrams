@@ -2,7 +2,6 @@ graph_template= """
 from diagrams import Diagram, Cluster
 
 from diagrams.aws.management import Organizations, OrganizationsAccount, OrganizationsOrganizationalUnit
-from diagrams.aws.general import Users, User
 
 with Diagram("Organizations-State", show=False, direction="TB"):
     ou = OrganizationsOrganizationalUnit("OU")

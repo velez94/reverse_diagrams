@@ -4,6 +4,10 @@
 
 This package create reverse diagrams  based on your current state in your cloud environment.
 
+# Install 
+
+`pip install reverse-diagrams`
+
 # Use
 
 The following are the available options
@@ -57,6 +61,10 @@ organizations-state.png
 For example:
 
 ![Organizations Diagram](./docs/images/organizations-state-copy.png)
+
+Now you can edit `graph_org.py` file or add to your repositories for keeping the documentation update.
+
+
 
 # Cloud Providers
 ## AWS

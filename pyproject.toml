@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reverse_diagrams"
-version = "0.1.5"
+version = "0.1.6"
 authors = [
     { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
 ]

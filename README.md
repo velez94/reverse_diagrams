@@ -1,3 +1,21 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  
+
+- [Reverse Diagrams](#reverse-diagrams)
+- [Install](#install)
+- [Use](#use)
+- [Cloud Providers](#cloud-providers)
+  - [AWS](#aws)
+    - [Requirement](#requirement)
+    - [Service supported](#service-supported)
+      - [AWS Organizations](#aws-organizations)
+      - [Identity and Access Manager Center (SSO)](#identity-and-access-manager-center-sso)
+  - [Additional Commands](#additional-commands)
+    - [Combine the options](#combine-the-options)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # Reverse Diagrams
 
 > Continuous Documentation Tool - Documentation as Code Tool

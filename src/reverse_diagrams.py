@@ -3,13 +3,14 @@ import argparse
 import logging
 from colorama import Fore
 from datetime import datetime
-from aws.describe_organization import describe_organization, \
+from .aws.describe_organization import describe_organization, \
     list_accounts, index_accounts, list_roots, list_organizational_units, index_ous
-from aws.describe_identity_store import order_accounts_assignments_list, extend_account_assignments, \
+from .aws.describe_identity_store import order_accounts_assignments_list, extend_account_assignments, \
     list_permissions_set, list_groups, get_members, list_users, complete_group_members, add_users_and_groups_assign
-from aws.describe_sso import list_instances, extends_permissions_set
-from dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create_sso_mapper
-from banner.banner import get_version
+from .aws.describe_sso import list_instances, extends_permissions_set
+from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create_sso_mapper, create_file, \
+    graph_template_sso_complete, graph_template, graph_template_sso
+from .banner.banner import get_version
 
 logging.basicConfig(level=logging.INFO)
 
@@ -43,6 +44,9 @@ def main() -> int:
         logging.info(f"Profile is: {profile}")
 
     if args.graph_organization:
+        create_file(template_content=graph_template, file_name="graph_org.py")
+
+
         client_org = boto3.client('organizations')
         organization = describe_organization(client_org)
         print(Fore.BLUE + "🔄 Getting Organization Info" + Fore.RESET)
@@ -70,6 +74,8 @@ def main() -> int:
         print(Fore.YELLOW + "Run -> python3 graph_org.py " + Fore.RESET)
 
     if args.graph_identity:
+        create_file(template_content=graph_template_sso, file_name="graph_sso.py")
+        create_file(template_content=graph_template_sso_complete, file_name="graph_sso_complete.py")
         # boto3.setup_default_session(profile_name='labvel-master', region_name="us-east-2")
         client_identity = boto3.client('identitystore', region_name="us-east-2")
         client_sso = boto3.client('sso-admin', region_name="us-east-2")

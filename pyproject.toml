@@ -14,11 +14,12 @@ authors = [
 description = "A tool for scan policies using AWS access Analyzer and "
 readme = "README.md"
 license = { file = "LICENSE" }
-requires-python = ">=3.7"
+requires-python = ">=3.8"
 dependencies = [
-    "json",
+    "jsonschema>=3.2.0",
    "diagrams>= 0.22.0",
-    "colorama>=0.4.4"
+    "colorama>=0.4.4",
+    "boto3>=1.26.4"
 
 
 ]
@@ -34,4 +35,4 @@ classifiers = [
 "Bug Tracker" = "https://github.com/pypa/sampleproject/issues"
 
 [project.scripts]
-reverse_diagrams = "src.reverse_diagram:main"
+reverse_diagrams = "src.reverse_diagrams:main"

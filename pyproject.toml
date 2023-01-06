@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reverse_diagrams"
-version = "0.1.6"
+version = "0.1.7"
 authors = [
     { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
 ]
@@ -19,7 +19,7 @@ dependencies = [
     "jsonschema>=3.2.0",
     "diagrams>= 0.22.0",
     "colorama>=0.4.4",
-    "boto3>=1.26.4"
+    "boto3>=1.29.44"
 
 
 ]

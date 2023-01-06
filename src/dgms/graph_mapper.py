@@ -2,6 +2,12 @@ import logging
 import re
 
 def format_name_string(a_string, action=None):
+    """
+
+    :param a_string:
+    :param action:
+    :return: sring --terragrunt-json-out
+    """
     if action == 'split':
         if len(a_string) > 17:
             a_string = a_string[:16] + "\\n" + a_string[16:]
@@ -84,7 +90,7 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
                 for o, j in zip(list_ous, range(len(list_ous))):
                     if p['Id'] == o["Id"] and p['Type'] == 'ORGANIZATIONAL_UNIT':
                         print(
-                            f"\n{ident}ou_{format_name_string(o['Name'],'format')}>> OrganizationsAccount(\"{c['account']}\\n{c['name']}\")",
+                            f"\n{ident}ou_{format_name_string(o['Name'],'format')}>> OrganizationsAccount(\"{c['account']}\\n{format_name_string(c['name'], action='split')}\")",
                             file=f)
 
         f.close()

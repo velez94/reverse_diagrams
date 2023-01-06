@@ -12,7 +12,7 @@ from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create
 from .dgms.graph_template import graph_template, graph_template_sso, graph_template_sso_complete
 from .banner.banner import get_version
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 
 
 def main() -> int:

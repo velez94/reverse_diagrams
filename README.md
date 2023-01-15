@@ -50,12 +50,13 @@ options:
 For example: 
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o
+reverse_diagrams -c aws -p my-profile -o -r us-east-2
 Date: 2022-12-17 22:33:21.791819
-🔄 Getting Organization Info
-🔄 The Organizational Units list 
-🔄 Getting the Account list info
-Run -> python3 graph_org.py 
+❇️ Getting Organization Info
+❇️ The Organizational Units list 
+❇️ Getting the Account list info
+✨   Run -> python3 graph_org.py 
+
 
 ```
 Then run `python3 graph_org.py` to create a png screenshot (`organizations-state.png`) for your current state.
@@ -63,11 +64,11 @@ Then run `python3 graph_org.py` to create a png screenshot (`organizations-state
 > Both files are saved into the current directory.
 
 ```commandline
-$  reverse_diagrams -c aws -p labvel-master -o
+$  reverse_diagrams -c aws -p labvel-master -o -r us-east-2
 Date: 2022-12-17 22:44:07.623260
-🔄 Getting Organization Info
-🔄 The Organizational Units list 
-🔄 Getting the Account list info
+❇️ Getting Organization Info
+❇️ The Organizational Units list 
+❇️ Getting the Account list info
 Run -> python3 graph_org.py 
 
 
@@ -96,18 +97,18 @@ AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](h
 #### AWS Organizations
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o 
+reverse_diagrams -c aws -p my-profile -o -r us-east-2
 ```
 #### Identity and Access Manager Center (SSO)
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -i 
+reverse_diagrams -c aws -p my-profile -i -r us-east-2
 ```
 ## Additional Commands
 
 ### Combine the options
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o -i
+reverse_diagrams -c aws -p my-profile -o -i -r us-east-2
 ```
 

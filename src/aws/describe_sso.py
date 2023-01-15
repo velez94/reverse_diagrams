@@ -1,6 +1,7 @@
 import boto3
 import logging
 
+
 def list_instances(client=boto3.client('sso-admin', region_name="us-east-2")):
     response = client.list_instances(
 

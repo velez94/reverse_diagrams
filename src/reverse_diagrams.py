@@ -13,7 +13,7 @@ from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create
 from .dgms.graph_template import graph_template, graph_template_sso, graph_template_sso_complete
 from .banner.banner import get_version
 
-__version__ = "0.1.9"
+__version__ = "0.1.10"
 
 
 def main() -> int:
@@ -77,6 +77,7 @@ def main() -> int:
             l_accounts = list_accounts(client_org)
             logging.debug(l_accounts)
             logging.debug("The Account list with parents info")
+            print(Fore.YELLOW + emoji.emojize(f":information:  There are {len(l_accounts)} in your organization" + Fore.RESET))
             i_accounts = index_accounts(l_accounts)
             logging.debug(i_accounts)
 

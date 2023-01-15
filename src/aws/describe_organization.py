@@ -15,7 +15,7 @@ def list_roots(client=boto3.client('organizations')):
     return roots["Roots"]
 
 
-def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units= []):
+def list_organizational_units(parent_id, client=boto3.client('organizations'), org_units=[]):
     ous = client.list_organizational_units_for_parent(
         ParentId=parent_id,
 
@@ -33,7 +33,7 @@ def list_organizational_units(parent_id, client=boto3.client('organizations'), o
                 ous_next = list_organizational_units(ou["Id"], client=client, org_units=org_units)
                 logging.debug(ous_next)
                 if len(ous_next) > 0:
-                    logging.debug("Find NetsteD")
+                    logging.debug("Find Netsted")
 
     return org_units
 
@@ -58,12 +58,35 @@ def index_ous(list_ous, client=boto3.client('organizations')):
     return list_ous
 
 
+def list_accounts_pag(client=boto3.client('organizations'), next_token: str = None):
+    paginator = client.get_paginator('list_accounts')
+    response_iterator = paginator.paginate(
+        PaginationConfig={
+            'MaxItems': 1000,
+            'PageSize': 20,
+            'StartingToken': next_token
+        }
+    )
+    response = response_iterator.build_full_result()
+    logging.info(response_iterator.build_full_result())
+    return response["Accounts"]
+
+
 def list_accounts(client=boto3.client('organizations')):
     accounts = client.list_accounts(
 
     )
+    logging.info(accounts)
+    l_account = accounts["Accounts"]
+    logging.info(len(accounts["Accounts"]))
+    if len(accounts["Accounts"]) >= 20:
+        logging.info("Paginating ...")
+        ad_accounts = list_accounts_pag(client=client, next_token=accounts["NextToken"])
+        for ad in ad_accounts:
+            l_account.append(ad)
+        logging.info(f"You Organizations have {len(l_account)} Accounts")
 
-    return accounts["Accounts"]
+    return l_account
 
 
 def index_accounts(list_account):

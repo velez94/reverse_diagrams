@@ -13,7 +13,7 @@ from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create
 from .dgms.graph_template import graph_template, graph_template_sso, graph_template_sso_complete
 from .banner.banner import get_version
 
-__version__ = "0.2.0"
+__version__ = "0.2.1"
 
 
 def main() -> int:
@@ -135,8 +135,6 @@ def main() -> int:
             print(Fore.BLUE + emoji.emojize(":sparkle: Getting account assignments, users and groups" + Fore.RESET))
             f_accounts = order_accounts_assignments_list(accounts_dict=l_accounts,
                                                          account_assignments=account_assignments)
-            print(f_accounts)
-            print("\n")
 
             create_sso_mapper_complete(template_file="graph_sso_complete.py",
                                        acc_assignments=f_accounts,

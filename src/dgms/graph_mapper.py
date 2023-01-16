@@ -1,6 +1,7 @@
 import logging
 import re
 
+
 def format_name_string(a_string, action=None):
     """
 
@@ -11,14 +12,15 @@ def format_name_string(a_string, action=None):
     if action == 'split':
         if len(a_string) > 17:
             a_string = a_string[:16] + "\\n" + a_string[16:]
-    elif action== 'format':
+    elif action == 'format':
 
         a_string = re.sub('[-!?@.+]', '', a_string)
         a_string = a_string.replace(" ", '')
     return a_string
 
 
-def create_sso_mapper_complete(template_file, acc_assignments):
+def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
+    print(acc_assignments)
     with open(template_file, 'a') as f:
         ident = "        "
 
@@ -30,22 +32,26 @@ def create_sso_mapper_complete(template_file, acc_assignments):
                     logging.debug(m)
 
                     if "GroupName" in m.keys():
-
                         print(f"\n{ident}with Cluster('Group: {m['GroupName']}'):", file=f)
-                        print(f"\n{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')}=Users(\"{format_name_string(m['GroupName'],'split')}\")\n"
-                              f"{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')} \\\n"
-                              f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
-                              f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'], 'split')}\")",
-                              file=f)
+                        print(
+                            f"\n{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')}=Users(\"{format_name_string(m['GroupName'], 'split')}\")\n"
+                            f"{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')} \\\n"
+                            f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\", label=\"Permissions Set\") \\\n"
+                            f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'], 'split')}\")\n"
+                            f"{ident}{ident}mm_{format_name_string(m['GroupName'], 'format')}={create_users_men(d_groups[m['GroupName']]['members'])} \n"  # ['members']}
+                            f"{ident}{ident}gg_{format_name_string(m['GroupName'], 'format')} \\\n"
+                            f"{ident}{ident}{ident}- Edge(color=\"darkgreen\", style=\"dotted\", label=\"Member\") \\\n"
+                            f"{ident}{ident}{ident}- mm_{format_name_string(m['GroupName'], 'format')} \n",
+
+                            file=f)
 
                     if "UserName" in m.keys():
-
                         print(f"\n{ident}with Cluster('User: {m['UserName']}'):", file=f)
                         print(
-                            f"\n{ident}{ident}uu_{format_name_string(m['UserName'], 'format')}=User(\"{format_name_string(m['UserName'],'split')}\")\n"
-                            f"{ident}{ident}uu_{format_name_string(m['UserName'],'format')} \\\n"
+                            f"\n{ident}{ident}uu_{format_name_string(m['UserName'], 'format')}=User(\"{format_name_string(m['UserName'], 'split')}\")\n"
+                            f"{ident}{ident}uu_{format_name_string(m['UserName'], 'format')} \\\n"
                             f"{ident}{ident}{ident}- Edge(color=\"brown\", style=\"dotted\") \\\n"
-                            f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'],'split')}\")",
+                            f"{ident}{ident}{ident}- IAMPermissions(\"{format_name_string(m['PermissionSetName'], 'split')}\")",
                             file=f)
                         # print(f"\n{ident}ou >> uu_{format_name_string(m['UserName'])}\n", file=f)
     f.close()
@@ -75,10 +81,10 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
 
             for p in a["Parents"]:
                 if p['Type'] == 'ROOT':
-                    print(f"\n{ident}oo>> ou_{format_name_string(a['Name'],'format')}", file=f)
+                    print(f"\n{ident}oo>> ou_{format_name_string(a['Name'], 'format')}", file=f)
                 if p['Type'] == 'ORGANIZATIONAL_UNIT':
                     print(
-                        f"\n{ident}ou_{format_name_string(find_ou_name(list_ous, p['Id']),'format')}>> ou_{format_name_string(a['Name'],'format')}",
+                        f"\n{ident}ou_{format_name_string(find_ou_name(list_ous, p['Id']), 'format')}>> ou_{format_name_string(a['Name'], 'format')}",
                         file=f)
 
         for c, i in zip(list_accounts, range(len(list_accounts))):
@@ -90,7 +96,7 @@ def create_mapper(template_file, org, root_id, list_ous, list_accounts):
                 for o, j in zip(list_ous, range(len(list_ous))):
                     if p['Id'] == o["Id"] and p['Type'] == 'ORGANIZATIONAL_UNIT':
                         print(
-                            f"\n{ident}ou_{format_name_string(o['Name'],'format')}>> OrganizationsAccount(\"{c['account']}\\n{format_name_string(c['name'], action='split')}\")",
+                            f"\n{ident}ou_{format_name_string(o['Name'], 'format')}>> OrganizationsAccount(\"{c['account']}\\n{format_name_string(c['name'], action='split')}\")",
                             file=f)
 
         f.close()
@@ -107,10 +113,25 @@ def create_sso_mapper(template_file, group_and_members):
                 users = "["
                 for m in g["members"]:
                     user_name = m["MemberId"]["UserName"]
-                    users += f"User(\"{format_name_string(user_name,'split')}\"),"
+                    users += f"User(\"{format_name_string(user_name, 'split')}\"),"
 
                 users += "]"
                 print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
             else:
                 print(f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'], 'split')}\")", file=f)
 
+
+def create_users_men(members):
+    if len(members) > 0:
+
+        users = "["
+        for m in members:
+            user_name = m["MemberId"]["UserName"]
+            users += f"User(\"{format_name_string(user_name, 'split')}\"),"
+
+        users += "]"
+
+    else:
+        users = "[]"
+
+    return users

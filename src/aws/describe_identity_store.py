@@ -50,6 +50,21 @@ def complete_group_members(group_members, users_list):
     return group_members
 
 
+def l_groups_to_d_groups(l_groups: list = None):
+    """
+
+    :param l_groups:
+    :return:
+    """
+    names = []
+    for a in l_groups:
+        names.append(a['group_name'])
+    logging.info(names)
+
+    d_user_groups = dict(zip(names, l_groups))
+    logging.info(d_user_groups)
+    return d_user_groups
+
 def extend_account_assignments(accounts_list, permissions_sets, store_arn,
                                client_sso=boto3.client('identitystore', region_name="us-east-2")):
     account_assignments = []

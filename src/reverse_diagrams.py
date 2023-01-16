@@ -7,13 +7,13 @@ from datetime import datetime
 from .aws.describe_organization import describe_organization, \
     list_accounts, index_accounts, list_roots, list_organizational_units, index_ous
 from .aws.describe_identity_store import order_accounts_assignments_list, extend_account_assignments, \
-    list_groups, get_members, list_users, complete_group_members, add_users_and_groups_assign
+    list_groups, get_members, list_users, complete_group_members, add_users_and_groups_assign, l_groups_to_d_groups
 from .aws.describe_sso import list_instances, extends_permissions_set, list_permissions_set
 from .dgms.graph_mapper import create_mapper, create_sso_mapper_complete, create_sso_mapper, create_file
 from .dgms.graph_template import graph_template, graph_template_sso, graph_template_sso_complete
 from .banner.banner import get_version
 
-__version__ = "0.1.11"
+__version__ = "0.2.0"
 
 
 def main() -> int:
@@ -77,14 +77,15 @@ def main() -> int:
             l_accounts = list_accounts(client_org)
             logging.debug(l_accounts)
             logging.debug("The Account list with parents info")
-            print(Fore.YELLOW + emoji.emojize(f":information:  There are {len(l_accounts)} in your organization" + Fore.RESET))
+            print(Fore.YELLOW + emoji.emojize(
+                f":information:  There are {len(l_accounts)} in your organization" + Fore.RESET))
             i_accounts = index_accounts(l_accounts)
             logging.debug(i_accounts)
 
             create_mapper(template_file="graph_org.py", org=organization, root_id=roots[0]["Id"], list_ous=ous,
                           list_accounts=i_accounts)
 
-            print(Fore.YELLOW + emoji.emojize( ":sparkles:   Run -> python3 graph_org.py " + Fore.RESET))
+            print(Fore.YELLOW + emoji.emojize(":sparkles:   Run -> python3 graph_org.py " + Fore.RESET))
 
         if args.graph_identity:
             create_file(template_content=graph_template_sso, file_name="graph_sso.py")
@@ -112,6 +113,7 @@ def main() -> int:
             l_users = list_users(store_id, client=client_identity)
             logging.debug(l_users)
             c_users_and_groups = complete_group_members(m_groups, l_users)
+            d_groups = l_groups_to_d_groups(l_groups=c_users_and_groups)
 
             logging.debug(c_users_and_groups)
             # Get Account assingments
@@ -133,9 +135,14 @@ def main() -> int:
             print(Fore.BLUE + emoji.emojize(":sparkle: Getting account assignments, users and groups" + Fore.RESET))
             f_accounts = order_accounts_assignments_list(accounts_dict=l_accounts,
                                                          account_assignments=account_assignments)
-            create_sso_mapper_complete(template_file="graph_sso_complete.py", acc_assignments=f_accounts)
+            print(f_accounts)
+            print("\n")
+
+            create_sso_mapper_complete(template_file="graph_sso_complete.py",
+                                       acc_assignments=f_accounts,
+                                       d_groups=d_groups)
             create_sso_mapper(template_file="graph_sso.py", group_and_members=c_users_and_groups)
-            print(Fore.YELLOW + emoji.emojize( ":sparkles: Run -> python3 graph_sso_complete.py " + Fore.RESET))
+            print(Fore.YELLOW + emoji.emojize(":sparkles: Run -> python3 graph_sso_complete.py " + Fore.RESET))
     else:
         print(Fore.RED + emoji.emojize(":warning: " + f"The cloud provider {args.cloud} is no available" + Fore.RESET))
     if args.version:

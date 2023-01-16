@@ -99,7 +99,7 @@ def main() -> int:
             logging.debug(store_instances)
             store_id = store_instances[0]["IdentityStoreId"]
             store_arn = store_instances[0]["InstanceArn"]
-            print(Fore.BLUE + "List groups" + Fore.RESET)
+            print(Fore.BLUE + emoji.emojize(":sparkle: List groups" + Fore.RESET))
             l_groups = list_groups(store_id, client=client_identity)
             logging.debug(l_groups)
 
@@ -140,7 +140,7 @@ def main() -> int:
                                        acc_assignments=f_accounts,
                                        d_groups=d_groups)
             create_sso_mapper(template_file="graph_sso.py", group_and_members=c_users_and_groups)
-            print(Fore.YELLOW + emoji.emojize(":sparkles: Run -> python3 graph_sso_complete.py " + Fore.RESET))
+            print(Fore.YELLOW + emoji.emojize(":sparkles:  Run -> python3 graph_sso_complete.py " + Fore.RESET))
     else:
         print(Fore.RED + emoji.emojize(":warning: " + f"The cloud provider {args.cloud} is no available" + Fore.RESET))
     if args.version:

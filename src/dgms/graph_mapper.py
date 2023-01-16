@@ -20,7 +20,7 @@ def format_name_string(a_string, action=None):
 
 
 def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
-    print(acc_assignments)
+
     with open(template_file, 'a') as f:
         ident = "        "
 

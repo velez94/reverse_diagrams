@@ -7,7 +7,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reverse_diagrams"
-version = "0.2.3"
+version = "0.2.4"
 authors = [
     { name = "Alejandro Velez", email = "avelez@labvel.io" },
 ]

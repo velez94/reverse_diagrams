@@ -23,14 +23,14 @@ def list_groups_pag(identity_store_id, client=boto3.client('identitystore', regi
 def list_groups(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
     groups = client.list_groups(
         IdentityStoreId=identity_store_id,
-        MaxResults=5
+        MaxResults=20
     )
 
     logging.info(groups)
     l_groups = groups["Groups"]
     logging.info(len(groups["Groups"]))
 
-    if len(groups["Groups"]) >= 5:
+    if len(groups["Groups"]) >= 20:
         logging.info("Paginating ...")
         ad_groups = list_groups_pag(identity_store_id=identity_store_id, client=client, next_token=groups["NextToken"])
         for ad in ad_groups:

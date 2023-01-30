@@ -1,5 +1,5 @@
 from colorama import Fore
-import emoji
+
 
 banner = """Reverse Diagrams 
 

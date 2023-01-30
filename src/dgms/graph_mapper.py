@@ -1,4 +1,5 @@
 import logging
+import os.path
 import re
 
 
@@ -57,8 +58,16 @@ def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
     f.close()
 
 
-def create_file(template_content, file_name):
-    with open(file_name, 'w') as f:
+def create_file(template_content, file_name, directory_path="."):
+    """
+
+    :param template_content:
+    :param file_name:
+    :param directory_path:
+    :return:
+    """
+    f_path=os.path.join(directory_path, file_name)
+    with open(f_path, 'w') as f:
         f.write(template_content)
     f.close()
 

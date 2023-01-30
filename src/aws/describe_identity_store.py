@@ -4,13 +4,40 @@ from colorama import Fore
 import logging
 
 
-def list_groups(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
-    response = client.list_groups(
+def list_groups_pag(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"),
+                    next_token: str = None):
+    paginator = client.get_paginator('list_groups')
+    response_iterator = paginator.paginate(
         IdentityStoreId=identity_store_id,
+        PaginationConfig={
+            'MaxItems': 1000,
+            'PageSize': 4,
+            'StartingToken': next_token
+        }
+    )
+    response = response_iterator.build_full_result()
+    logging.info(response_iterator.build_full_result())
+    return response["Groups"]
 
+
+def list_groups(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
+    groups = client.list_groups(
+        IdentityStoreId=identity_store_id,
+        MaxResults=5
     )
 
-    return response["Groups"]
+    logging.info(groups)
+    l_groups = groups["Groups"]
+    logging.info(len(groups["Groups"]))
+
+    if len(groups["Groups"]) >= 5:
+        logging.info("Paginating ...")
+        ad_groups = list_groups_pag(identity_store_id=identity_store_id, client=client, next_token=groups["NextToken"])
+        for ad in ad_groups:
+            l_groups.append(ad)
+        logging.info(f"You have {len(l_groups)} Groups")
+
+    return l_groups
 
 
 def list_users(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"), ):
@@ -65,6 +92,7 @@ def l_groups_to_d_groups(l_groups: list = None):
     logging.info(d_user_groups)
     return d_user_groups
 
+
 def extend_account_assignments(accounts_list, permissions_sets, store_arn,
                                client_sso=boto3.client('identitystore', region_name="us-east-2")):
     account_assignments = []
@@ -84,15 +112,15 @@ def add_users_and_groups_assign(account_assignments_list, user_and_group_list, u
     for a in account_assignments_list:
         for g in user_and_group_list:
             if len(a) > 0 and a['PrincipalType'] == 'GROUP' and g["group_id"] == a['PrincipalId']:
-                print( Fore.YELLOW +
-                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {g['group_name']} with permission set {list_permissions_set_arn_name[a['PermissionSetArn']]} or {a['PermissionSetArn']}" + Fore.RESET)
+                print(Fore.YELLOW +
+                      f"Account {a['AccountId']} assign to {a['PrincipalType']} {g['group_name']} with permission set {list_permissions_set_arn_name[a['PermissionSetArn']]} or {a['PermissionSetArn']}" + Fore.RESET)
 
                 a["GroupName"] = g['group_name']
                 a["PermissionSetName"] = list_permissions_set_arn_name[a['PermissionSetArn']]
         for u in user_list:
             if len(a) > 0 and a['PrincipalType'] == 'USER' and u["UserId"] == a['PrincipalId']:
                 print(Fore.YELLOW +
-                    f"Account {a['AccountId']} assign to {a['PrincipalType']} {u['UserName']} with permission set {a['PermissionSetArn']} or {list_permissions_set_arn_name[a['PermissionSetArn']]}"+ Fore.RESET)
+                      f"Account {a['AccountId']} assign to {a['PrincipalType']} {u['UserName']} with permission set {a['PermissionSetArn']} or {list_permissions_set_arn_name[a['PermissionSetArn']]}" + Fore.RESET)
                 a["UserName"] = u['UserName']
                 a["PermissionSetName"] = list_permissions_set_arn_name[a['PermissionSetArn']]
     logging.debug(f"Account Assignments --> {account_assignments_list}")

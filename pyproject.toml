@@ -7,9 +7,9 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reverse_diagrams"
-version = "0.2.1"
+version = "0.2.3"
 authors = [
-    { name = "Alejandro Velez", email = "wilmar.velezl@sophossolutions.com" },
+    { name = "Alejandro Velez", email = "avelez@labvel.io" },
 ]
 description = "Continuous Documentation Tool - Documentation as Code Tool - \n This package create reverse diagrams  based on your current state in your cloud environment"
 readme = "README.md"

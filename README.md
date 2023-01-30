@@ -32,8 +32,7 @@ The following are the available options
 
 ```commandline
 $ reverse_diagrams -h 
-
-usage: reverse_diagrams [-h] [-c CLOUD] [-p PROFILE] [-o] [-i] [-v]
+usage: reverse_diagrams [-h] [-c CLOUD] [-p PROFILE] [-od OUTPUT_DIR_PATH] [-r REGION] [-o] [-i] [-v] [-d]
 
 options:
   -h, --help            show this help message and exit
@@ -41,10 +40,15 @@ options:
                         Cloud Provider, aws, gcp, azure
   -p PROFILE, --profile PROFILE
                         AWS cli profile for Access Analyzer Api
+  -od OUTPUT_DIR_PATH, --output_dir_path OUTPUT_DIR_PATH
+                        Name of folder to save the diagrams python code files
+  -r REGION, --region REGION
+                        AWS cli profile for Access Analyzer Api
   -o, --graph_organization
                         Set if you want to create graph for your organization
   -i, --graph_identity  Set if you want to create graph for your IAM Center
   -v, --version         Show version
+  -d, --debug           Debug Mode
 
 ```
 For example: 

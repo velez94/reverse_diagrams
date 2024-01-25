@@ -26,9 +26,9 @@ def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
         ident = "        "
 
         for key, value in acc_assignments.items():
-            print(f"\n    with Cluster('Account: {key}'):", file=f)
-            if len(value) > 0:
 
+            if len(value) > 0:
+                print(f"\n    with Cluster('Account: {key}'):", file=f)
                 for m in value:
                     logging.debug(m)
 

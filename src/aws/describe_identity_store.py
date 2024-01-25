@@ -49,22 +49,80 @@ def list_users(identity_store_id, client=boto3.client('identitystore', region_na
     return response["Users"]
 
 
+def get_members_pag(identity_store_id, client=boto3.client('identitystore', region_name="us-east-2"),
+                    next_token: str = None):
+    paginator = client.get_paginator('list_group_memberships')
+    response_iterator = paginator.paginate(
+        IdentityStoreId=identity_store_id,
+        PaginationConfig={
+            'MaxItems': 1000,
+            'PageSize': 4,
+            'StartingToken': next_token
+        }
+    )
+    response = response_iterator.build_full_result()
+    logging.info(response_iterator.build_full_result())
+    return response["GroupMemberships"]
+
+
 def get_members(identity_store_id, groups, client=boto3.client('identitystore', region_name="us-east-2")):
     group_members = []
     for g in groups:
         response = client.list_group_memberships(
             IdentityStoreId=identity_store_id,
             GroupId=g["GroupId"],
+            MaxResults=20,
 
         )
+        members = response["GroupMemberships"]
+        logging.info(members)
+
+        logging.info(len(members))
+
+        if len(members) >= 20:
+            logging.info("Paginating ...")
+            ad_members = get_members_pag(identity_store_id=identity_store_id, client=client,
+                                         next_token=response["NextToken"])
+            for ad in ad_members:
+                members.append(ad)
+            logging.info(f"You have {len(ad_members)} Members")
+            print(f"You have {len(ad_members)} Members")
+
         group_members.append(
             {"group_id": g["GroupId"],
              "group_name": g["DisplayName"],
-             "members": response["GroupMemberships"]
+             "members": members
              }
         )
 
     return group_members
+
+
+def list_group_memberships(identitystore_client, group_name, pagination=True):
+    """
+    Lists memberships for a group in an AWS SSO identity store.
+
+    Args:
+        identitystore_client (boto3.client): Boto3 SSO identity store client
+        group_name (str): Name of the group to list memberships for
+        pagination (bool): Whether to enable result pagination (default: True)
+
+    Returns:
+        list: List of member objects
+    """
+
+    params = {'GroupName': group_name}
+    members = []
+
+    if pagination:
+        paginator = identitystore_client.get_paginator('list_group_memberships')
+        for page in paginator.paginate(**params):
+            members.extend(page['Members'])
+    else:
+        response = identitystore_client.list_group_memberships(**params)
+        members.extend(response['Members'])
+
+    return members
 
 
 def complete_group_members(group_members, users_list):

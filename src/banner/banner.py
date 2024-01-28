@@ -1,6 +1,5 @@
 from colorama import Fore
 
-
 banner = """Reverse Diagrams 
 
  #####   ######  #    #  ######  #####    ####   ######
@@ -21,7 +20,13 @@ banner = """Reverse Diagrams
 
 
 def get_version(version):
-    print(Fore.BLUE + banner )
+    """
+    Get package version.
+
+    :param version:
+    :return:
+    """
+    print(Fore.BLUE + banner)
 
     print(version + Fore.RESET)
 

@@ -5,6 +5,7 @@ import re
 
 def format_name_string(a_string, action=None):
     """
+    Format name strings to avoid no allowed characters.
 
     :param a_string:
     :param action:
@@ -21,6 +22,14 @@ def format_name_string(a_string, action=None):
 
 
 def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
+    """
+    Create sso mapper.
+
+    :param template_file: Template file
+    :param acc_assignments:
+    :param d_groups:
+    :return:
+    """
 
     with open(template_file, 'a') as f:
         ident = "        "

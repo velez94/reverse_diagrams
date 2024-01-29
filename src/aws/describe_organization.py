@@ -68,7 +68,7 @@ def list_organizational_units(parent_id, region, org_units=None):
     )
     logging.debug(ous)
     if len(ous) > 0:
-        for ou in ous["OrganizationalUnits"]:
+        for ou in ous:
             logging.debug(ou)
             if "Id" in ou.keys():
                 logging.debug(f"Search nested for: {ou['Name']}")

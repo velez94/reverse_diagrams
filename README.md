@@ -31,22 +31,21 @@ This package create reverse diagrams  based on your current state in your cloud 
 The following are the available options
 
 ```commandline
-$ reverse_diagrams -h 
-usage: reverse_diagrams [-h] [-c CLOUD] [-p PROFILE] [-od OUTPUT_DIR_PATH] [-r REGION] [-o] [-i] [-v] [-d]
+$  reverse_diagrams -h 
+usage: reverse_diagrams [-h] [-p PROFILE] [-od OUTPUT_DIR_PATH] [-r REGION] [-o] [-i] [-a] [-v] [-d]
 
 options:
   -h, --help            show this help message and exit
-  -c CLOUD, --cloud CLOUD
-                        Cloud Provider, aws, gcp, azure
   -p PROFILE, --profile PROFILE
-                        AWS cli profile for Access Analyzer Api
+                        AWS cli profile for AWS Apis
   -od OUTPUT_DIR_PATH, --output_dir_path OUTPUT_DIR_PATH
                         Name of folder to save the diagrams python code files
   -r REGION, --region REGION
-                        AWS cli profile for Access Analyzer Api
+                        AWS region
   -o, --graph_organization
                         Set if you want to create graph for your organization
   -i, --graph_identity  Set if you want to create graph for your IAM Center
+  -a, --auto_create     Create Automatically diagrams
   -v, --version         Show version
   -d, --debug           Debug Mode
 
@@ -54,13 +53,24 @@ options:
 For example: 
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o -r us-east-2
-Date: 2022-12-17 22:33:21.791819
+❇️ Describe Organization 
 ❇️ Getting Organization Info
-❇️ The Organizational Units list 
+❇️ Listing Organizational Units 
 ❇️ Getting the Account list info
-✨   Run -> python3 graph_org.py 
-
+ℹ️  There are 11 Accounts in your organization
+ℹ️  The accounts are stored in diagrams/json/organizations.json 
+❇️ Creating diagrams in diagrams/code
+❇️ Getting Identity store instance info
+❇️ List groups
+ℹ️  There are 10 Groups in your Identity Store
+❇️ Get groups and Users info
+Getting groups members... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:07
+Getting account assignments ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:05:23
+Create user and groups assignments ... ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ 100% 0:00:00
+❇️ Getting account assignments, users and groups
+ℹ️  The accounts are stored in diagrams/json/account_assignments.json
+ℹ️  The accounts are stored in diagrams/json/groups.json
+ ❇️ Creating diagrams in diagrams/code
 
 ```
 Then run `python3 graph_org.py` to create a png screenshot (`organizations-state.png`) for your current state.

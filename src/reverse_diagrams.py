@@ -50,6 +50,7 @@ def graph_organizations(diagrams_path, region, auto):
     """
     Create organizations Graph.
 
+    :param auto:
     :param diagrams_path:
     :param region:
     :return:
@@ -110,7 +111,7 @@ def graph_organizations(diagrams_path, region, auto):
         list_accounts=i_accounts,
     )
     if auto:
-        print(f"{Fore.GREEN} ❇️ Creating diagrams in {code_path}")
+        print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")
         command = os.system(f"cd {code_path} && python3 {template_file}")
         if command != 0:
             print(Fore.RED + "❌ Error creating diagrams")
@@ -128,6 +129,7 @@ def graph_identity_center(diagrams_path, region, auto):
     """
     Create Identity center diagram.
 
+    :param auto:
     :param diagrams_path:
     :param region:
     :return:
@@ -227,7 +229,7 @@ def graph_identity_center(diagrams_path, region, auto):
     create_sso_mapper(template_file=f_path, group_and_members=c_users_and_groups)
 
     if auto:
-        print(f"{Fore.GREEN} ❇️ Creating diagrams in {code_path}")
+        print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")
         command_1 = os.system(f"cd {code_path} && python3 {template_file}")
         command = os.system(f"cd {code_path} && python3 {template_file_complete}")
 

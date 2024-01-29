@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v1.0.4](https://github.com/velez94/reverse_diagrams/releases/tag/v1.0.4) - 2024-01-29
+
+<small>[Compare with v1.0.2](https://github.com/velez94/reverse_diagrams/compare/v1.0.2...v1.0.4)</small>
+
+### Bug Fixes
+
+- optimize execution describe identity ([2db7868](https://github.com/velez94/reverse_diagrams/commit/2db7868647e002435d082616c1afa9900ffcf6e7) by alejandro.velez).
+
+## [v1.0.2](https://github.com/velez94/reverse_diagrams/releases/tag/v1.0.2) - 2024-01-29
+
+<small>[Compare with v1.0.1](https://github.com/velez94/reverse_diagrams/compare/v1.0.1...v1.0.2)</small>
+
+### Bug Fixes
+
+- repair describe organizations function ([a8e0f2b](https://github.com/velez94/reverse_diagrams/commit/a8e0f2b341bf0cb1d17576d2aa57f9a51f027463) by alejandro.velez).
+
+### Code Refactoring
+
+- refactor getting account assignments ([9c77a98](https://github.com/velez94/reverse_diagrams/commit/9c77a985e93ddd4a86158fda123752b18673c1a9) by alejandro.velez).
+
 ## [v1.0.1](https://github.com/velez94/reverse_diagrams/releases/tag/v1.0.1) - 2024-01-29
 
 <small>[Compare with v1.0.0](https://github.com/velez94/reverse_diagrams/compare/v1.0.0...v1.0.1)</small>

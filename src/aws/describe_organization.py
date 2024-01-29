@@ -38,6 +38,7 @@ def list_organizational_units_pag(parent_id, region, next_token=None):
         ParentId=parent_id,
         PaginationConfig={"MaxItems": 1000, "PageSize": 4, "StartingToken": next_token},
     )
+    response_iterator = response_iterator.build_full_result()
     return response_iterator["OrganizationalUnits"]
 
 

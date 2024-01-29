@@ -45,10 +45,11 @@ def list_account_assignments_pag(
     return response_iterator["AccountAssignments"]
 
 
-def list_account_assignments(instance_arn, account_id, permission_set_arn, region):
+def list_account_assignments(instance_arn, account_id, permission_set_arn, region, sso_client):
     """
     List all account assignments.
 
+    :param sso_client:
     :param instance_arn:
     :param account_id:
     :param permission_set_arn:
@@ -56,11 +57,12 @@ def list_account_assignments(instance_arn, account_id, permission_set_arn, regio
     :return:
 
     """
-    sso_client = client("sso-admin", region_name=region)
+    #sso_client = client("sso-admin", region_name=region)
     response = sso_client.list_account_assignments(
         InstanceArn=instance_arn,
         AccountId=account_id,
         PermissionSetArn=permission_set_arn,
+        MaxResults=20,
     )
     account_assignments = response["AccountAssignments"]
     if len(response["AccountAssignments"]) >= 20:
@@ -83,6 +85,7 @@ def list_permissions_set_pag(instance_arn, region, next_token):
     """
     List all permission set in a region.
 
+    :param next_token:
     :param instance_arn:
     :param region:
     :return:
@@ -97,6 +100,7 @@ def list_permissions_set_pag(instance_arn, region, next_token):
             "StartingToken": next_token,
         },
     )
+    response_iterator = response_iterator.build_full_result()
     return response_iterator["PermissionSets"]
 
 
@@ -123,8 +127,8 @@ def list_permissions_set(instance_arn, region):
         )
         for response in response_iterator:
             logging.debug(response)
-            permissions_set.append(response["PermissionSets"])
-            logging.info(response["PermissionSets"])
+            permissions_set.append(response)
+            logging.info(response)
 
     return permissions_set
 

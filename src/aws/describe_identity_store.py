@@ -52,6 +52,7 @@ def list_users_pag(identity_store_id, region, next_token: str = None):
         IdentityStoreId=identity_store_id,
         PaginationConfig={"MaxItems": 1000, "PageSize": 4, "StartingToken": next_token},
     )
+    response_iterator = response_iterator.build_full_result()
     return response_iterator["Users"]
 
 
@@ -60,9 +61,11 @@ def list_users(identity_store_id, region):
 
     response = identity_client.list_users(
         IdentityStoreId=identity_store_id,
+        MaxResults=20
     )
     # create pagination option
     users = response["Users"]
+
     if len(users) >= 20:
         logging.info("Paginating ...")
         ad_users = list_users_pag(
@@ -183,6 +186,7 @@ def l_groups_to_d_groups(l_groups: list = None):
 
 def extend_account_assignments(accounts_list, permissions_sets, store_arn, region):
     account_assignments = []
+    sso_client = client("sso-admin", region_name=region)
     for p, y in zip(
         permissions_sets,
         track(
@@ -196,6 +200,7 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
                 account_id=ac["Id"],
                 region=region,
                 permission_set_arn=p,
+                sso_client = sso_client
             )
             logging.debug(f"AccountAssignments  {assign}")
             for a in assign:

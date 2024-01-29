@@ -116,3 +116,25 @@ reverse_diagrams -c aws -p my-profile -i -r us-east-2
 reverse_diagrams -c aws -p my-profile -o -i -r us-east-2
 ```
 
+## Extras
+### Enable autocomplete
+Argcomplete provides easy, extensible command line tab completion of arguments for your Python application.
+
+It makes two assumptions:
+
+* You’re using bash or zsh as your shell
+
+* You’re using argparse to manage your command line arguments/options
+
+Argcomplete is particularly useful if your program has lots of options or subparsers, and if your program can dynamically suggest completions for your argument/option values (for example, if the user is browsing resources over the network).
+Run: 
+```bash
+activate-global-python-argcomplete
+```
+and to make sure that bash knows about this script, you use
+```bash
+
+echo 'eval "$(register-python-argcomplete reverse_diagrams)"' >> ~/.bashrc
+source ~/.bashrc
+
+```

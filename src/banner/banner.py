@@ -1,7 +1,7 @@
 from colorama import Fore
 
-banner = """Reverse Diagrams 
 
+banner = """Reverse Diagrams 
  #####   ######  #    #  ######  #####    ####   ######
  #    #  #       #    #  #       #    #  #       #
  #    #  #####   #    #  #####   #    #   ####   #####

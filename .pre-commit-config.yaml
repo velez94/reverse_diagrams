@@ -1,0 +1,38 @@
+repos:
+- repo: https://github.com/astral-sh/ruff-pre-commit
+  # Ruff version.
+  rev: v0.1.11
+  hooks:
+    # Run the linter.
+    - id: ruff
+      args: [ --fix ]
+    # Run the formatter.
+    - id: ruff-format
+
+-   repo: https://github.com/miki725/importanize
+    rev: 0.8.0-alpha2
+    hooks:
+    -   id: importanize
+
+#-   repo: https://github.com/PyCQA/bandit
+#    rev: 1.7.6
+#    hooks:
+#    - id: bandit
+
+
+#   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
+#   rev: v1.7.2
+#   hooks:
+#   -   id: python-safety-dependencies-check
+#       args: [check, --full-report, --file]
+
+-   repo: https://github.com/PyCQA/pydocstyle
+    rev: 6.3.0
+    hooks:
+    -   id: pydocstyle
+
+
+
+
+
+

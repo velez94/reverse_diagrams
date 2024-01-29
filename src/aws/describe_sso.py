@@ -57,7 +57,6 @@ def list_account_assignments(instance_arn, account_id, permission_set_arn, regio
     :return:
 
     """
-    #sso_client = client("sso-admin", region_name=region)
     response = sso_client.list_account_assignments(
         InstanceArn=instance_arn,
         AccountId=account_id,

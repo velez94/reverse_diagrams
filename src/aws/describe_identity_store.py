@@ -45,12 +45,13 @@ def list_groups(identity_store_id, region):
 
 
 # define pagination list user function
-def list_users_pag(identity_store_id, region, next_token: str = None):
-    identity_client = client("identitystore", region_name=region)
+def list_users_pag(identity_store_id, identity_client, next_token: str = None, ):
     paginator = identity_client.get_paginator("list_users")
     response_iterator = paginator.paginate(
         IdentityStoreId=identity_store_id,
-        PaginationConfig={"MaxItems": 1000, "PageSize": 4, "StartingToken": next_token},
+        PaginationConfig={"MaxItems": 1000,
+                          "PageSize": 20,
+                          "StartingToken": next_token},
     )
     response_iterator = response_iterator.build_full_result()
     return response_iterator["Users"]
@@ -70,8 +71,8 @@ def list_users(identity_store_id, region):
         logging.info("Paginating ...")
         ad_users = list_users_pag(
             identity_store_id=identity_store_id,
-            region=region,
             next_token=response["NextToken"],
+            identity_client=identity_client,
         )
         for ad in ad_users:
             users.append(ad)
@@ -80,9 +81,7 @@ def list_users(identity_store_id, region):
     return users
 
 
-def get_members_pag(identity_store_id, region, next_token: str = None):
-    identity_client = client("identitystore", region_name=region)
-
+def get_members_pag(identity_store_id, identity_client, next_token: str = None):
     paginator = identity_client.get_paginator("list_group_memberships")
     response_iterator = paginator.paginate(
         IdentityStoreId=identity_store_id,
@@ -97,7 +96,7 @@ def get_members(identity_store_id, groups, region):
     l_client = client("identitystore", region_name=region)
     group_members = []
     for g, y in zip(
-        groups, track(range(len(groups) - 1), description="Getting groups members...")
+            groups, track(range(len(groups) - 1), description="Getting groups members...")
     ):
         response = l_client.list_group_memberships(
             IdentityStoreId=identity_store_id,
@@ -113,7 +112,7 @@ def get_members(identity_store_id, groups, region):
             logging.info("Paginating ...")
             ad_members = get_members_pag(
                 identity_store_id=identity_store_id,
-                region=region,
+                identity_client=l_client,
                 next_token=response["NextToken"],
             )
             for ad in ad_members:
@@ -188,11 +187,11 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
     account_assignments = []
     sso_client = client("sso-admin", region_name=region)
     for p, y in zip(
-        permissions_sets,
-        track(
-            range(len(permissions_sets) - 1),
-            description="Getting account assignments ...",
-        ),
+            permissions_sets,
+            track(
+                range(len(permissions_sets) - 1),
+                description="Getting account assignments ...",
+            ),
     ):
         for ac in accounts_list:
             assign = list_account_assignments(
@@ -200,7 +199,7 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
                 account_id=ac["Id"],
                 region=region,
                 permission_set_arn=p,
-                sso_client = sso_client
+                sso_client=sso_client
             )
             logging.debug(f"AccountAssignments  {assign}")
             for a in assign:
@@ -209,23 +208,23 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
 
 
 def add_users_and_groups_assign(
-    account_assignments_list,
-    user_and_group_list,
-    user_list,
-    list_permissions_set_arn_name,
+        account_assignments_list,
+        user_and_group_list,
+        user_list,
+        list_permissions_set_arn_name,
 ):
     for a, y in zip(
-        account_assignments_list,
-        track(
-            range(len(account_assignments_list) - 1),
-            description="Create user and groups assignments ...",
-        ),
+            account_assignments_list,
+            track(
+                range(len(account_assignments_list) - 1),
+                description="Create user and groups assignments ...",
+            ),
     ):
         for g in user_and_group_list:
             if (
-                len(a) > 0
-                and a["PrincipalType"] == "GROUP"
-                and g["group_id"] == a["PrincipalId"]
+                    len(a) > 0
+                    and a["PrincipalType"] == "GROUP"
+                    and g["group_id"] == a["PrincipalId"]
             ):
                 logging.info(
                     Fore.YELLOW
@@ -239,9 +238,9 @@ def add_users_and_groups_assign(
                 ]
         for u in user_list:
             if (
-                len(a) > 0
-                and a["PrincipalType"] == "USER"
-                and u["UserId"] == a["PrincipalId"]
+                    len(a) > 0
+                    and a["PrincipalType"] == "USER"
+                    and u["UserId"] == a["PrincipalId"]
             ):
                 logging.info(
                     Fore.YELLOW

@@ -1,3 +1,4 @@
+"""Describe Organizations."""
 import logging
 
 from colorama import Fore
@@ -21,7 +22,8 @@ def describe_organization(region):
 
 def list_roots(region):
     """
-    List the roots
+    List the roots.
+
     :param region: AWS Region
     :return:
     """
@@ -32,6 +34,14 @@ def list_roots(region):
 
 # def list organizational units pagination
 def list_organizational_units_pag(parent_id, region, next_token=None):
+    """
+    List organizational Units with pagination.
+
+    :param parent_id:
+    :param region:
+    :param next_token:
+    :return:
+    """
     org_client = client("organizations", region_name=region)
     paginator = org_client.get_paginator("list_organizational_units_for_parent")
     response_iterator = paginator.paginate(
@@ -43,6 +53,14 @@ def list_organizational_units_pag(parent_id, region, next_token=None):
 
 
 def list_organizational_units(parent_id, region, org_units=None):
+    """
+    List Organizational units.
+
+    :param parent_id:
+    :param region:
+    :param org_units:
+    :return:
+    """
     org_client = client("organizations", region_name=region)
     if org_units is None:
         org_units = []
@@ -118,6 +136,13 @@ def index_ous(list_ous, region):
 
 
 def list_accounts_pag(region, next_token: str = None):
+    """
+    List accounts with pagination.
+
+    :param region:
+    :param next_token:
+    :return:
+    """
     org_client = client("organizations", region_name=region)
     paginator = org_client.get_paginator("list_accounts")
     response_iterator = paginator.paginate(
@@ -129,6 +154,12 @@ def list_accounts_pag(region, next_token: str = None):
 
 
 def list_accounts(region):
+    """
+    List accounts.
+
+    :param region:
+    :return:
+    """
     org_client = client("organizations", region_name=region)
     accounts = org_client.list_accounts()
     logging.info(accounts)
@@ -145,6 +176,13 @@ def list_accounts(region):
 
 
 def index_accounts(list_account, region):
+    """
+    Index accounts.
+
+    :param list_account:
+    :param region:
+    :return:
+    """
     accounts = []
     org_client = client("organizations", region_name=region)
     for a in list_account:

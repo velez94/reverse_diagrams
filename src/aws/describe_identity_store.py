@@ -1,3 +1,4 @@
+"""Describe Identity store."""
 import logging
 
 from colorama import Fore
@@ -7,6 +8,14 @@ from .describe_sso import client, list_account_assignments
 
 
 def list_groups_pag(identity_store_id, region, next_token: str = None):
+    """
+    List groups using pagination.
+
+    :param identity_store_id:
+    :param region:
+    :param next_token:
+    :return:
+    """
     identity_client = client("identitystore", region_name=region)
 
     paginator = identity_client.get_paginator("list_groups")
@@ -20,6 +29,13 @@ def list_groups_pag(identity_store_id, region, next_token: str = None):
 
 
 def list_groups(identity_store_id, region):
+    """
+    List Groups.
+
+    :param identity_store_id:
+    :param region:
+    :return:
+    """
     identity_client = client("identitystore", region_name=region)
 
     groups = identity_client.list_groups(
@@ -45,24 +61,44 @@ def list_groups(identity_store_id, region):
 
 
 # define pagination list user function
-def list_users_pag(identity_store_id, identity_client, next_token: str = None, ):
+def list_users_pag(
+    identity_store_id,
+    identity_client,
+    next_token: str = None,
+):
+    """
+    List member in identity story using pagination.
+
+    :param identity_store_id:
+    :param identity_client:
+    :param next_token:
+    :return:
+    """
     paginator = identity_client.get_paginator("list_users")
     response_iterator = paginator.paginate(
         IdentityStoreId=identity_store_id,
-        PaginationConfig={"MaxItems": 1000,
-                          "PageSize": 20,
-                          "StartingToken": next_token},
+        PaginationConfig={
+            "MaxItems": 1000,
+            "PageSize": 20,
+            "StartingToken": next_token,
+        },
     )
     response_iterator = response_iterator.build_full_result()
     return response_iterator["Users"]
 
 
 def list_users(identity_store_id, region):
+    """
+    List User in identity store.
+
+    :param identity_store_id:
+    :param region:
+    :return:
+    """
     identity_client = client("identitystore", region_name=region)
 
     response = identity_client.list_users(
-        IdentityStoreId=identity_store_id,
-        MaxResults=20
+        IdentityStoreId=identity_store_id, MaxResults=20
     )
     # create pagination option
     users = response["Users"]
@@ -82,6 +118,14 @@ def list_users(identity_store_id, region):
 
 
 def get_members_pag(identity_store_id, identity_client, next_token: str = None):
+    """
+    Get members using paginator.
+
+    :param identity_store_id:
+    :param identity_client:
+    :param next_token:
+    :return:
+    """
     paginator = identity_client.get_paginator("list_group_memberships")
     response_iterator = paginator.paginate(
         IdentityStoreId=identity_store_id,
@@ -93,10 +137,18 @@ def get_members_pag(identity_store_id, identity_client, next_token: str = None):
 
 
 def get_members(identity_store_id, groups, region):
+    """
+    Ger members.
+
+    :param identity_store_id:
+    :param groups:
+    :param region:
+    :return:
+    """
     l_client = client("identitystore", region_name=region)
     group_members = []
     for g, y in zip(
-            groups, track(range(len(groups) - 1), description="Getting groups members...")
+        groups, track(range(len(groups) - 1), description="Getting groups members...")
     ):
         response = l_client.list_group_memberships(
             IdentityStoreId=identity_store_id,
@@ -132,7 +184,7 @@ def get_members(identity_store_id, groups, region):
 
 def list_group_memberships(identitystore_client, group_name, pagination=True):
     """
-    Lists memberships for a group in an AWS SSO identity store.
+    List memberships for a group in an AWS SSO identity store.
 
     Args:
         identitystore_client (client): Boto3 SSO identity store client
@@ -142,7 +194,6 @@ def list_group_memberships(identitystore_client, group_name, pagination=True):
     Returns:
         list: List of member objects
     """
-
     params = {"GroupName": group_name}
     members = []
 
@@ -158,6 +209,13 @@ def list_group_memberships(identitystore_client, group_name, pagination=True):
 
 
 def complete_group_members(group_members, users_list):
+    """
+    Complete group members.
+
+    :param group_members:
+    :param users_list:
+    :return:
+    """
     for m in group_members:
         for u in m["members"]:
             for a in users_list:
@@ -169,6 +227,7 @@ def complete_group_members(group_members, users_list):
 
 def l_groups_to_d_groups(l_groups: list = None):
     """
+    Create group dictionary for groups.
 
     :param l_groups:
     :return:
@@ -184,14 +243,23 @@ def l_groups_to_d_groups(l_groups: list = None):
 
 
 def extend_account_assignments(accounts_list, permissions_sets, store_arn, region):
+    """
+    Extend accounts assignments.
+
+    :param accounts_list:
+    :param permissions_sets:
+    :param store_arn:
+    :param region:
+    :return:
+    """
     account_assignments = []
     sso_client = client("sso-admin", region_name=region)
     for p, y in zip(
-            permissions_sets,
-            track(
-                range(len(permissions_sets) - 1),
-                description="Getting account assignments ...",
-            ),
+        permissions_sets,
+        track(
+            range(len(permissions_sets) - 1),
+            description="Getting account assignments ...",
+        ),
     ):
         for ac in accounts_list:
             assign = list_account_assignments(
@@ -199,7 +267,7 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
                 account_id=ac["Id"],
                 region=region,
                 permission_set_arn=p,
-                sso_client=sso_client
+                sso_client=sso_client,
             )
             logging.debug(f"AccountAssignments  {assign}")
             for a in assign:
@@ -208,23 +276,32 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
 
 
 def add_users_and_groups_assign(
-        account_assignments_list,
-        user_and_group_list,
-        user_list,
-        list_permissions_set_arn_name,
+    account_assignments_list,
+    user_and_group_list,
+    user_list,
+    list_permissions_set_arn_name,
 ):
+    """
+    Add user to groups.
+
+    :param account_assignments_list:
+    :param user_and_group_list:
+    :param user_list:
+    :param list_permissions_set_arn_name:
+    :return:
+    """
     for a, y in zip(
-            account_assignments_list,
-            track(
-                range(len(account_assignments_list) - 1),
-                description="Create user and groups assignments ...",
-            ),
+        account_assignments_list,
+        track(
+            range(len(account_assignments_list) - 1),
+            description="Create user and groups assignments ...",
+        ),
     ):
         for g in user_and_group_list:
             if (
-                    len(a) > 0
-                    and a["PrincipalType"] == "GROUP"
-                    and g["group_id"] == a["PrincipalId"]
+                len(a) > 0
+                and a["PrincipalType"] == "GROUP"
+                and g["group_id"] == a["PrincipalId"]
             ):
                 logging.info(
                     Fore.YELLOW
@@ -238,9 +315,9 @@ def add_users_and_groups_assign(
                 ]
         for u in user_list:
             if (
-                    len(a) > 0
-                    and a["PrincipalType"] == "USER"
-                    and u["UserId"] == a["PrincipalId"]
+                len(a) > 0
+                and a["PrincipalType"] == "USER"
+                and u["UserId"] == a["PrincipalId"]
             ):
                 logging.info(
                     Fore.YELLOW
@@ -256,6 +333,13 @@ def add_users_and_groups_assign(
 
 
 def order_accounts_assignments_list(accounts_dict, account_assignments):
+    """
+    Order accounts and assigments list.
+
+    :param accounts_dict:
+    :param account_assignments:
+    :return:
+    """
     final_account_assignments = {}
     for ac in accounts_dict:
         final_account_assignments[ac["Name"]] = []

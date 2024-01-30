@@ -1,3 +1,4 @@
+"""Create graphs."""
 import argparse
 import logging
 import os
@@ -134,7 +135,6 @@ def graph_identity_center(diagrams_path, region, auto):
     :param region:
     :return:
     """
-
     template_file = "graph_sso.py"
     template_file_complete = "graph_sso_complete.py"
 
@@ -252,7 +252,6 @@ def main() -> int:
 
     :return:
     """
-
     # Initialize parser
     parser = argparse.ArgumentParser()
 

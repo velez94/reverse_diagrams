@@ -9,6 +9,8 @@ from colorama import Fore
 def save_results(results, filename, directory_path="."):
     """
     Save results to a file.
+
+    :param directory_path:
     :param results:
     :param filename:
 

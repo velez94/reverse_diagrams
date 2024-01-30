@@ -1,3 +1,4 @@
+"""Create Mapper files."""
 import logging
 import os.path
 import re
@@ -30,7 +31,6 @@ def create_sso_mapper_complete(template_file, acc_assignments, d_groups):
     :param d_groups:
     :return:
     """
-
     with open(template_file, "a") as f:
         ident = "        "
 
@@ -91,12 +91,29 @@ def create_file(template_content, file_name, directory_path="."):
 
 
 def find_ou_name(ous, search_id):
+    """
+    Find OU Name in list.
+
+    :param ous:
+    :param search_id:
+    :return:
+    """
     for a in ous:
         if a["Id"] == search_id:
             return a["Name"]
 
 
 def create_mapper(template_file, org, root_id, list_ous, list_accounts):
+    """
+    Create complete mapper file.
+
+    :param template_file:
+    :param org:
+    :param root_id:
+    :param list_ous:
+    :param list_accounts:
+    :return:
+    """
     with open(template_file, "a") as f:
         ident = "        "
         print("\n    with Cluster('Organizations'):", file=f)
@@ -152,7 +169,7 @@ def create_sso_mapper(template_file, group_and_members):
     with open(template_file, "a") as f:
         ident = "        "
         print("\n    with Cluster('Groups'):", file=f)
-        for g, l in zip(group_and_members, range(len(group_and_members))):
+        for g, ll in zip(group_and_members, range(len(group_and_members))):
             if len(g["members"]) > 0:
                 print(f"\n{ident}with Cluster(\"{g['group_name']}\"):", file=f)
                 users = "["
@@ -161,10 +178,10 @@ def create_sso_mapper(template_file, group_and_members):
                     users += f"User(\"{format_name_string(user_name, 'split')}\"),"
 
                 users += "]"
-                print(f"\n{ident}{ident}gg_{l}= {users}", file=f)
+                print(f"\n{ident}{ident}gg_{ll}= {users}", file=f)
             else:
                 print(
-                    f"\n{ident}gg_{l}= Users(\"{format_name_string(g['group_name'], 'split')}\")",
+                    f"\n{ident}gg_{ll}= Users(\"{format_name_string(g['group_name'], 'split')}\")",
                     file=f,
                 )
 

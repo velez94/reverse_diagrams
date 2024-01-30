@@ -1,3 +1,4 @@
+"""Graph template headers for files."""
 graph_template = """
 from diagrams import Diagram, Cluster
 

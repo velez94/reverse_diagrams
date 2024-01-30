@@ -5,14 +5,14 @@
 - [Reverse Diagrams](#reverse-diagrams)
 - [Install](#install)
 - [Use](#use)
-- [Cloud Providers](#cloud-providers)
-  - [AWS](#aws)
     - [Requirement](#requirement)
     - [Service supported](#service-supported)
       - [AWS Organizations](#aws-organizations)
       - [Identity and Access Manager Center (SSO)](#identity-and-access-manager-center-sso)
   - [Additional Commands](#additional-commands)
     - [Combine the options](#combine-the-options)
+  - [Extras](#extras)
+    - [Enable autocomplete](#enable-autocomplete)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
@@ -53,6 +53,8 @@ options:
 For example: 
 
 ```commandline
+reverse_diagrams -p labvel-master -o -i -r us-east-1
+
 ❇️ Describe Organization 
 ❇️ Getting Organization Info
 ❇️ Listing Organizational Units 
@@ -70,7 +72,7 @@ Create user and groups assignments ... ━━━━━━━━━━━━━�
 ❇️ Getting account assignments, users and groups
 ℹ️  The accounts are stored in diagrams/json/account_assignments.json
 ℹ️  The accounts are stored in diagrams/json/groups.json
- ❇️ Creating diagrams in diagrams/code
+❇️ Creating diagrams in diagrams/code
 
 ```
 Then run `python3 graph_org.py` to create a png screenshot (`organizations-state.png`) for your current state.
@@ -78,7 +80,7 @@ Then run `python3 graph_org.py` to create a png screenshot (`organizations-state
 > Both files are saved into the current directory.
 
 ```commandline
-$  reverse_diagrams -c aws -p labvel-master -o -r us-east-2
+$  reverse_diagrams -p labvel-master -o -r us-east-2
 Date: 2022-12-17 22:44:07.623260
 ❇️ Getting Organization Info
 ❇️ The Organizational Units list 
@@ -96,11 +98,6 @@ For example:
 ![Organizations Diagram](./docs/images/organizations-state-copy.png)
 
 Now you can edit `graph_org.py` file or add to your repositories for keeping the documentation update.
-
-
-
-# Cloud Providers
-## AWS
 
 ### Requirement
 

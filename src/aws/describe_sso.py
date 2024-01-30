@@ -1,3 +1,4 @@
+"""Describe SSO."""
 import logging
 
 from boto3 import client
@@ -45,7 +46,9 @@ def list_account_assignments_pag(
     return response_iterator["AccountAssignments"]
 
 
-def list_account_assignments(instance_arn, account_id, permission_set_arn, region, sso_client):
+def list_account_assignments(
+    instance_arn, account_id, permission_set_arn, region, sso_client
+):
     """
     List all account assignments.
 
@@ -152,7 +155,7 @@ def list_permission_provisioned(account_id, instance_arn, region):
 
 def extends_permissions_set(permissions_sets, store_arn, region):
     """
-    List all permission set in a region
+    List all permission set in a region.
 
     :param permissions_sets:
     :param store_arn:

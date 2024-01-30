@@ -1,10 +1,30 @@
 """Describe Identity store."""
 import logging
+import os
 
+import emoji
 from colorama import Fore
 from rich.progress import track
 
-from .describe_sso import client, list_account_assignments
+from ..dgms.graph_mapper import (
+    create_file,
+    create_sso_mapper,
+    create_sso_mapper_complete,
+)
+from ..dgms.graph_template import (
+    graph_template_sso,
+    graph_template_sso_complete,
+)
+from ..reports.save_results import save_results
+from .describe_organization import list_accounts
+from .describe_sso import (
+    client,
+    extends_permissions_set,
+    list_account_assignments,
+    list_instances,
+    list_permissions_set,
+)
+from ..reports.console_view import create_console_view, create_account_assignments_view
 
 
 def list_groups_pag(identity_store_id, region, next_token: str = None):
@@ -148,7 +168,7 @@ def get_members(identity_store_id, groups, region):
     l_client = client("identitystore", region_name=region)
     group_members = []
     for g, y in zip(
-        groups, track(range(len(groups) - 1), description="Getting groups members...")
+        groups, track(range(len(groups)), description="Getting groups members...")
     ):
         response = l_client.list_group_memberships(
             IdentityStoreId=identity_store_id,
@@ -257,7 +277,7 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
     for p, y in zip(
         permissions_sets,
         track(
-            range(len(permissions_sets) - 1),
+            range(len(permissions_sets) ),
             description="Getting account assignments ...",
         ),
     ):
@@ -293,7 +313,7 @@ def add_users_and_groups_assign(
     for a, y in zip(
         account_assignments_list,
         track(
-            range(len(account_assignments_list) - 1),
+            range(len(account_assignments_list) ),
             description="Create user and groups assignments ...",
         ),
     ):
@@ -349,3 +369,126 @@ def order_accounts_assignments_list(accounts_dict, account_assignments):
 
         logging.debug(f"Final Account Assignments: {final_account_assignments}")
     return final_account_assignments
+
+
+def graph_identity_center(diagrams_path, region, auto):
+    """
+    Create Identity center diagram.
+
+    :param auto:
+    :param diagrams_path:
+    :param region:
+    :return:
+    """
+    template_file = "graph_sso.py"
+    template_file_complete = "graph_sso_complete.py"
+
+    code_path = f"{diagrams_path}/code"
+    json_path = f"{diagrams_path}/json"
+
+    create_file(
+        template_content=graph_template_sso,
+        file_name=template_file,
+        directory_path=code_path,
+    )
+    create_file(
+        template_content=graph_template_sso_complete,
+        file_name=template_file_complete,
+        directory_path=code_path,
+    )
+
+    store_instances = list_instances(region=region)
+    print(
+        Fore.BLUE
+        + emoji.emojize(":sparkle: Getting Identity store instance info" + Fore.RESET)
+    )
+    logging.debug(store_instances)
+    store_id = store_instances[0]["IdentityStoreId"]
+    store_arn = store_instances[0]["InstanceArn"]
+
+    print(Fore.BLUE + emoji.emojize(":sparkle: List groups" + Fore.RESET))
+    l_groups = list_groups(store_id, region=region)
+    logging.debug(l_groups)
+    print(
+        Fore.YELLOW
+        + emoji.emojize(
+            f":information:  There are {len(l_groups)} Groups in your Identity Store"
+            + Fore.RESET
+        )
+    )
+
+    print(Fore.BLUE + emoji.emojize(":sparkle: Get groups and Users info" + Fore.RESET))
+    m_groups = get_members(store_id, l_groups, region=region)
+    logging.debug(m_groups)
+    logging.debug("Extend Group Members")
+    l_users = list_users(store_id, region=region)
+    logging.debug(l_users)
+    c_users_and_groups = complete_group_members(m_groups, l_users)
+    d_groups = l_groups_to_d_groups(l_groups=c_users_and_groups)
+
+    logging.debug(c_users_and_groups)
+    # Get Account assignments
+    permissions_set = list_permissions_set(instance_arn=store_arn, region=region)
+    l_permissions_set_arn_name = extends_permissions_set(
+        permissions_sets=permissions_set, store_arn=store_arn, region=region
+    )
+
+    l_accounts = list_accounts(region=region)
+    account_assignments = extend_account_assignments(
+        accounts_list=l_accounts,
+        permissions_sets=l_permissions_set_arn_name,
+        region=region,
+        store_arn=store_arn,
+    )
+
+    account_assignments = add_users_and_groups_assign(
+        account_assignments_list=account_assignments,
+        user_and_group_list=c_users_and_groups,
+        user_list=l_users,
+        list_permissions_set_arn_name=l_permissions_set_arn_name,
+    )
+
+    print(
+        Fore.BLUE
+        + emoji.emojize(
+            ":sparkle: Getting account assignments, users and groups" + Fore.RESET
+        )
+    )
+    f_accounts = order_accounts_assignments_list(
+        accounts_dict=l_accounts, account_assignments=account_assignments
+    )
+    f_path = os.path.join(code_path, template_file_complete)
+    create_sso_mapper_complete(
+        template_file=f_path, acc_assignments=f_accounts, d_groups=d_groups
+    )
+
+    save_results(
+        results=f_accounts,
+        filename="account_assignments.json",
+        directory_path=json_path,
+    )
+    save_results(results=d_groups, filename="groups.json", directory_path=json_path)
+
+    f_path = os.path.join(code_path, template_file)
+
+    create_sso_mapper(template_file=f_path, group_and_members=c_users_and_groups)
+
+    if auto:
+        print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")
+        command_1 = os.system(f"cd {code_path} && python3 {template_file}")
+        command = os.system(f"cd {code_path} && python3 {template_file_complete}")
+
+        if command != 0 or command_1 != 0:
+            print(Fore.RED + "❌ Error creating diagrams")
+            print(command)
+
+        create_console_view(file_path=f"{json_path}/groups.json")
+        create_account_assignments_view(file_path=f"{json_path}/account_assignments.json")
+    else:
+        print(
+            Fore.YELLOW
+            + emoji.emojize(
+                f":sparkles:  Run -> python3 {code_path}/{template_file_complete}"
+                f" or python3 {code_path}/{template_file}" + Fore.RESET
+            )
+        )

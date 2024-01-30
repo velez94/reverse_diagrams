@@ -64,10 +64,10 @@ def list_account_assignments(
         InstanceArn=instance_arn,
         AccountId=account_id,
         PermissionSetArn=permission_set_arn,
-        MaxResults=20,
+        MaxResults=50,
     )
     account_assignments = response["AccountAssignments"]
-    if len(response["AccountAssignments"]) >= 20:
+    if len(response["AccountAssignments"]) >= 50:
         logging.info("Paginating ...")
         response_iterator = list_account_assignments_pag(
             instance_arn,

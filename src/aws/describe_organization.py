@@ -1,9 +1,16 @@
 """Describe Organizations."""
 import logging
+import os
 
+import emoji
 from colorama import Fore
 
+from ..dgms.graph_mapper import create_file, create_mapper
+from ..dgms.graph_template import graph_template
+from ..reports.save_results import save_results
 from .describe_sso import client
+from ..reports.console_view import create_account_assignments_view
+
 
 
 def describe_organization(region):
@@ -194,3 +201,83 @@ def index_accounts(list_account, region):
             {"account": a["Id"], "name": a["Name"], "parents": response["Parents"]}
         )
     return accounts
+
+
+def graph_organizations(diagrams_path, region, auto):
+    """
+    Create organizations Graph.
+
+    :param auto:
+    :param diagrams_path:
+    :param region:
+    :return:
+    """
+    template_file = "graph_org.py"
+    code_path = f"{diagrams_path}/code"
+    json_path = f"{diagrams_path}/json"
+    create_file(
+        template_content=graph_template,
+        file_name=template_file,
+        directory_path=code_path,
+    )
+
+    organization = describe_organization(region=region)
+    print(Fore.BLUE + emoji.emojize(":sparkle: Getting Organization Info" + Fore.RESET))
+    logging.debug(organization)
+    logging.debug("The Roots Info")
+    roots = list_roots(region=region)
+    logging.debug(roots)
+
+    print(
+        Fore.BLUE
+        + emoji.emojize(":sparkle: Listing Organizational Units " + Fore.RESET)
+    )
+    logging.debug("The Organizational Units list ")
+    ous = list_organizational_units(parent_id=roots[0]["Id"], region=region)
+    logging.debug(ous)
+    logging.debug("The Organizational Units list with parents info")
+    i_ous = index_ous(ous, region=region)
+    logging.debug(i_ous)
+
+    print(
+        Fore.BLUE
+        + emoji.emojize(":sparkle: Getting the Account list info" + Fore.RESET)
+    )
+    l_accounts = list_accounts(region=region)
+    logging.debug(l_accounts)
+    logging.debug("The Account list with parents info")
+
+    print(
+        Fore.YELLOW
+        + emoji.emojize(
+            f":information:  There are {len(l_accounts)} Accounts in your organization"
+            + Fore.RESET
+        )
+    )
+    i_accounts = index_accounts(l_accounts, region=region)
+    logging.debug(i_accounts)
+
+    file_name = "organizations.json"
+    save_results(results=i_accounts, filename=file_name, directory_path=json_path)
+
+    create_mapper(
+        template_file=f"{code_path}/{template_file}",
+        org=organization,
+        root_id=roots[0]["Id"],
+        list_ous=ous,
+        list_accounts=i_accounts,
+    )
+    if auto:
+        print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")
+        command = os.system(f"cd {code_path} && python3 {template_file}")
+        if command != 0:
+            print(Fore.RED + "❌ Error creating diagrams")
+            print(command)
+
+    else:
+        print(
+            Fore.YELLOW
+            + emoji.emojize(
+                f":sparkles: Run -> python3 {code_path}/graph_org.py " + Fore.RESET
+            )
+        )

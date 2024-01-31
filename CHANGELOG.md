@@ -6,6 +6,26 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v1.2.0](https://github.com/velez94/reverse_diagrams/releases/tag/v1.2.0) - 2024-01-31
+
+<small>[Compare with v1.1.2](https://github.com/velez94/reverse_diagrams/compare/v1.1.2...v1.2.0)</small>
+
+### Features
+
+- add watch subcommand ([a1844c3](https://github.com/velez94/reverse_diagrams/commit/a1844c3b114e3d3174618b5cd50e1d140e4dc5a2) by alejandro.velez).
+
+## [v1.1.2](https://github.com/velez94/reverse_diagrams/releases/tag/v1.1.2) - 2024-01-31
+
+<small>[Compare with v1.1.0](https://github.com/velez94/reverse_diagrams/compare/v1.1.0...v1.1.2)</small>
+
+### Bug Fixes
+
+- modify console view according to describe account assgnments information ([5214926](https://github.com/velez94/reverse_diagrams/commit/52149269bad5919fa1f32088774022e1b4d43e10) by wilmar.velezl).
+
+### Docs
+
+- update Readme.md ([0e020ac](https://github.com/velez94/reverse_diagrams/commit/0e020acf15522c5355617c014134a95ae0cd97a6) by alejandro.velez).
+
 ## [v1.1.0](https://github.com/velez94/reverse_diagrams/releases/tag/v1.1.0) - 2024-01-30
 
 <small>[Compare with v1.0.4](https://github.com/velez94/reverse_diagrams/compare/v1.0.4...v1.1.0)</small>

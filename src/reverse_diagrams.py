@@ -9,7 +9,7 @@ from .aws.describe_identity_store import graph_identity_center
 from .aws.describe_organization import graph_organizations
 from .banner.banner import get_version
 from .version import __version__
-
+from .reports.console_view import watch_on_demand
 
 
 def main() -> int:
@@ -19,7 +19,11 @@ def main() -> int:
     :return:
     """
     # Initialize parser
-    parser = argparse.ArgumentParser()
+    parser = argparse.ArgumentParser(
+        prog="reverse_diagrams",
+        description="Create architecture diagram, inspect and audit your AWS services from your current state.",
+        epilog="Thanks for using %(prog)s!"
+    )
 
     parser.add_argument(
         "-p", "--profile", help="AWS cli profile for AWS Apis", default=None
@@ -50,6 +54,46 @@ def main() -> int:
         action="store_true",
         default=True,
     )
+    # Create subparsers
+    subparsers = parser.add_subparsers(
+        dest="commands",
+        title="Commands",
+        help="%(prog)s Commands",
+        description="Command and functionalities",
+    )
+    # Create init subcommand options
+    watch_parser = subparsers.add_parser(
+        name="watch",
+        description="Create view of diagrams in console based on kind of diagram and json file.",
+        help="Create pretty console view: \n"
+             "For example: %(prog)s watch -wi diagrams/json/account_assignments.json ",
+    )
+    # Add idp options
+    watch_group = watch_parser.add_argument_group(
+        "Create view of diagrams in console based on kind of diagram and json file."
+    )
+    watch_group.add_argument(
+        "-wo",
+        "--watch_graph_organization",
+        help="Set if you want to see graph for your organization structure summary.\n"
+             "For example: %(prog)s watch  -wi diagrams/json/organizations.json",
+
+    )
+    watch_group.add_argument(
+        "-wi",
+        "--watch_graph_identity",
+        help="Set if you want to see graph for your groups and users. \n"
+             "For example: %(prog)s watch  -wi diagrams/json/groups.json",
+
+    )
+    watch_group.add_argument(
+        "-wa",
+        "--watch_graph_accounts_assignments",
+        help="Set if you want to see graph for your IAM Center- Accounts assignments. \n"
+             "For example: %(prog)s watch  -wi diagrams/json/account_assignments.json.json",
+
+    )
+
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
     parser.add_argument("-d", "--debug", help="Debug Mode", action="store_true")
 
@@ -81,6 +125,9 @@ def main() -> int:
         graph_identity_center(
             diagrams_path=diagrams_path, region=region, auto=args.auto_create
         )
+    if args.commands == "watch":
+
+        watch_on_demand(args=args)
 
     if args.version:
         get_version(version=__version__)

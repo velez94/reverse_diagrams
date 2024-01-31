@@ -21,6 +21,10 @@
 > Continuous Documentation Tool - Documentation as Code Tool
 
 This package create reverse diagrams  based on your current state in your cloud environment.
+# Requirement
+
+AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+
 
 # Install 
 
@@ -31,8 +35,10 @@ This package create reverse diagrams  based on your current state in your cloud 
 The following are the available options
 
 ```commandline
-$  reverse_diagrams -h 
-usage: reverse_diagrams [-h] [-p PROFILE] [-od OUTPUT_DIR_PATH] [-r REGION] [-o] [-i] [-a] [-v] [-d]
+$ reverse_diagrams  -h
+usage: reverse_diagrams [-h] [-p PROFILE] [-od OUTPUT_DIR_PATH] [-r REGION] [-o] [-i] [-a] [-v] [-d] {watch} ...
+
+Create architecture diagram, inspect and audit your AWS services from your current state.
 
 options:
   -h, --help            show this help message and exit
@@ -48,6 +54,14 @@ options:
   -a, --auto_create     Create Automatically diagrams
   -v, --version         Show version
   -d, --debug           Debug Mode
+
+Commands:
+  Command and functionalities
+
+  {watch}               reverse_diagrams Commands
+    watch               Create pretty console viewexample: reverse_diagrams watch -wi diagrams/json/account_assignments.json
+
+Thanks for using reverse_diagrams!
 
 ```
 For example: 
@@ -98,12 +112,31 @@ For example:
 ![Organizations Diagram](./docs/images/organizations-state-copy.png)
 
 Now you can edit `graph_org.py` file or add to your repositories for keeping the documentation update.
+## Subcommands
 
-### Requirement
+### watch
 
-AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+Watch the result in console with a beautiful print style.
+```commandline
+ reverse_diagrams  watch  -h
+usage: reverse_diagrams watch [-h] [-wo WATCH_GRAPH_ORGANIZATION] [-wi WATCH_GRAPH_IDENTITY] [-wa WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS]
 
-### Service supported
+Create view of diagrams in console based on kind of diagram and json file.
+
+options:
+  -h, --help            show this help message and exit
+
+Create view of diagrams in console based on kind of diagram and json file.:
+  -wo WATCH_GRAPH_ORGANIZATION, --watch_graph_organization WATCH_GRAPH_ORGANIZATION
+                        Set if you want to see graph for your organization structure summary. For example: reverse_diagrams watch watch -wi diagrams/json/organizations.json        
+  -wi WATCH_GRAPH_IDENTITY, --watch_graph_identity WATCH_GRAPH_IDENTITY
+                        Set if you want to see graph for your groups and users. For example: reverse_diagrams watch watch -wi diagrams/json/groups.json
+  -wa WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS, --watch_graph_accounts_assignments WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS
+                        Set if you want to see graph for your IAM Center- Accounts assignments. For example: reverse_diagrams watch watch -wi
+                        diagrams/json/account_assignments.json.jso
+```
+
+## Service supported
 
 #### AWS Organizations
 

@@ -2,6 +2,7 @@ import json
 from rich.console import Console
 from rich.columns import Columns
 from rich.panel import Panel
+from colorama import Fore
 from rich.progress import track
 
 
@@ -54,11 +55,16 @@ def create_console_view(file_path="diagrams/json/groups.json"):
     :param file_path:
     :return:
     """
-    c = load_json(file_path)
-    members = get_members(c)
-    console = Console()
-    c = [Panel(f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}", expand=True) for group in c]
-    console.print(Columns(c))
+    try:
+        c = load_json(file_path)
+        members = get_members(c)
+        console = Console()
+        c = [Panel(f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}", expand=True) for group in c]
+        console.print(Columns(c))
+    except FileNotFoundError:
+
+        print(f"{Fore.RED}File not found. {Fore.RESET}")
+        raise
 
 
 # get account  assignments
@@ -97,4 +103,22 @@ def create_account_assignments_view(file_path="diagrams/json/account_assignments
     c = [Panel(f"[b]{account}[/b]\n[blue]{pretty_account_assignments(assign)}", expand=True) for account in assign]
     console.print(Columns(c))
 
+
 # pretty for organizations
+
+def watch_on_demand(args, ):
+    """
+    Watch on demand graphs in cosole.
+
+    :param args:
+    :return:
+    """
+    if args.watch_graph_organization:
+        # create_console_view(file_path=f"{diagrams_path}/json/organizations.json")
+        print("Not available jet")
+    if args.watch_graph_accounts_assignments:
+        create_account_assignments_view(file_path=args.watch_graph_accounts_assignments)
+    if args.watch_graph_identity:
+        create_console_view(file_path=args.watch_graph_identity)
+
+

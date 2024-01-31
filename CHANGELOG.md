@@ -6,6 +6,14 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v1.2.1](https://github.com/velez94/reverse_diagrams/releases/tag/v1.2.1) - 2024-01-31
+
+<small>[Compare with v1.2.0](https://github.com/velez94/reverse_diagrams/compare/v1.2.0...v1.2.1)</small>
+
+### Docs
+
+- update readme ([4510b94](https://github.com/velez94/reverse_diagrams/commit/4510b948f8571dbd8bec1f82e7ceb57bea426dd7) by alejandro.velez).
+
 ## [v1.2.0](https://github.com/velez94/reverse_diagrams/releases/tag/v1.2.0) - 2024-01-31
 
 <small>[Compare with v1.1.2](https://github.com/velez94/reverse_diagrams/compare/v1.1.2...v1.2.0)</small>
@@ -93,4 +101,3 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [v0.2.3](https://github.com/velez94/reverse_diagrams/releases/tag/v0.2.3) - 2023-01-30
 
 <small>[Compare with first commit](https://github.com/velez94/reverse_diagrams/compare/9ee05c383bf95a8f575e794e08b52672ad7c16cb...v0.2.3)</small>
-

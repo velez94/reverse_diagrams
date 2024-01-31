@@ -78,8 +78,8 @@ def pretty_account_assignments(accounts: dict):
                 string += f"GroupName: {c['GroupName']}\n"
             elif c['PrincipalType'] == "USER":
                 string += f"UserName: {c['UserName']}\n"
-
-            string += f"PermissionSetName: {c['PermissionSetName']}\n\n"
+            if "PermissionSetName" in c.keys():
+                string += f"PermissionSetName: {c['PermissionSetName']}\n\n"
 
     return string
 

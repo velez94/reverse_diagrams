@@ -9,8 +9,6 @@ from ..dgms.graph_mapper import create_file, create_mapper
 from ..dgms.graph_template import graph_template
 from ..reports.save_results import save_results
 from .describe_sso import client
-from ..reports.console_view import create_account_assignments_view
-
 
 
 def describe_organization(region):

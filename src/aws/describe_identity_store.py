@@ -59,14 +59,15 @@ def list_groups(identity_store_id, region):
     identity_client = client("identitystore", region_name=region)
 
     groups = identity_client.list_groups(
-        IdentityStoreId=identity_store_id, MaxResults=20
+        IdentityStoreId=identity_store_id,
+        MaxResults=20
     )
 
     logging.info(groups)
     l_groups = groups["Groups"]
     logging.info(len(groups["Groups"]))
 
-    if len(groups["Groups"]) >= 20:
+    if len(groups["Groups"]) >= 20 and "NextToken" in groups.keys():
         logging.info("Paginating ...")
         ad_groups = list_groups_pag(
             identity_store_id=identity_store_id,

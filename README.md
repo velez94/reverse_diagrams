@@ -108,19 +108,19 @@ AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](h
 #### AWS Organizations
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o -r us-east-2
+reverse_diagrams -p my-profile -o -r us-east-2
 ```
 #### Identity and Access Manager Center (SSO)
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -i -r us-east-2
+reverse_diagrams -p my-profile -i -r us-east-2
 ```
 ## Additional Commands
 
 ### Combine the options
 
 ```commandline
-reverse_diagrams -c aws -p my-profile -o -i -r us-east-2
+reverse_diagrams  -p my-profile -o -i -r us-east-2
 ```
 
 ## Extras

@@ -3,10 +3,12 @@
 **Table of Contents**  
 
 - [Reverse Diagrams](#reverse-diagrams)
+- [Requirement](#requirement)
 - [Install](#install)
 - [Use](#use)
-    - [Requirement](#requirement)
-    - [Service supported](#service-supported)
+  - [Subcommands](#subcommands)
+    - [watch](#watch)
+  - [Service supported](#service-supported)
       - [AWS Organizations](#aws-organizations)
       - [Identity and Access Manager Center (SSO)](#identity-and-access-manager-center-sso)
   - [Additional Commands](#additional-commands)

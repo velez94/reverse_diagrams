@@ -430,18 +430,16 @@ def graph_organizations(diagrams_path, region, auto):
         list_accounts=i_accounts,
     )
     file_name = "organizations_complete.json"
-    ## view in console
-    organizations_complete_f = set_accounts_tree(llist_accounts=i_accounts,
-                                                 organizations_complete=init_org_complete(org=organization,
-                                                                                          root_id=roots[0]["Id"],
-                                                                                          list_ous=i_ous),
-                                                 list_ous=i_ous)
+    # view in console
     organizations_complete_f = map_organizations_complete(
-        organizations_complete=organizations_complete_f,
+        organizations_complete=init_org_complete(org=organization, root_id=roots[0]["Id"],
+                                                 list_ous=i_ous),
         llist_accounts=i_accounts, list_ous=i_ous, reference_outs_list=i_ous.copy()
     )
+    organizations_complete_f = set_accounts_tree(llist_accounts=i_accounts,
+                                                 organizations_complete=organizations_complete_f, list_ous=i_ous),
 
-    save_results(results=organizations_complete_f, filename=f"{code_path}/{file_name}")
+    save_results(results=organizations_complete_f, filename=f"{json_path}/{file_name}")
 
     if auto:
         print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")

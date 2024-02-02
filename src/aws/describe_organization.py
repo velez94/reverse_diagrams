@@ -5,7 +5,7 @@ import os
 import emoji
 from colorama import Fore
 
-from ..dgms.graph_mapper import create_file, create_mapper
+from ..dgms.graph_mapper import create_file, create_mapper, find_ou_name
 from ..dgms.graph_template import graph_template
 from ..reports.save_results import save_results
 from .describe_sso import client
@@ -201,6 +201,170 @@ def index_accounts(list_account, region):
     return accounts
 
 
+# create organization complete map
+def find_ou_index(ous, search_id):
+    """
+    Find OU Name in list.
+
+    :param ous:
+    :param search_id:
+    :return:
+    """
+    for a in ous:
+        if a["Id"] == search_id:
+            return a
+
+
+# search ou in map
+def search_ou_map(map_ou: dict, ou_id, level=0, tree="."):
+    """
+    Search OU in map.
+
+    :param tree:
+    :param level:
+    :param map_ou:
+    :param ou_id:
+    :return:
+    """
+    for a in map_ou.keys():
+        # print(f'Searching {ou_id}... in {map_ou[a]["nestedOus"]}')
+
+        if len(map_ou[a]["nestedOus"]) > 0:
+            level += 1
+            tree += f".{a}"
+
+            if ou_id in map_ou[a]["nestedOus"].keys():
+                # search_ou_map(map_ou=map_ou[a]["nestedOus"], ou_id=ou_id, level=level, tree=tree)
+
+                return map_ou[a]
+            # else:
+            # search_ou_map(map_ou=map_ou[a]["nestedOus"], ou_id=ou_id, level=level, tree=tree)
+    return None
+
+
+def init_org_complete(root_id, org, list_ous, ):
+    organizations_complete = {
+        "rootId": root_id,
+        "masterAccountId": org['MasterAccountId'],
+        "noOutAccounts": [],
+        "organizationalUnits": {}
+    }
+
+    # Iterate in ous for getting ous tree
+    for a, i in zip(list_ous, range(len(list_ous))):
+
+        for p in a["Parents"]:
+            if p["Type"] == "ROOT":
+                organizations_complete["organizationalUnits"][a['Name']] = {
+                    "Id": a['Id'],
+                    "Name": a['Name'],
+                    "accounts": {},
+                    "nestedOus": {}}
+    return organizations_complete
+
+
+# create organization complete map
+def map_organizations_complete(organizations_complete: dict,
+                               list_ous, llist_accounts,
+                               reference_outs_list,
+                               ):
+    """
+    Create complete mapper file.
+
+
+    :param reference_outs_list:
+    :param organizations_complete:
+    :param list_ous:
+    :param llist_accounts:
+    :return:
+    """
+
+    # Iterate in ous for getting ous tree
+    for a, i in zip(list_ous, range(len(list_ous))):
+
+        for p in a["Parents"]:
+
+            if p["Type"] == "ORGANIZATIONAL_UNIT":
+
+                o = find_ou_name(reference_outs_list, p['Id'])
+
+                if o not in organizations_complete["organizationalUnits"].keys():
+                    p = search_ou_map(organizations_complete["organizationalUnits"], ou_id=o)
+                    o = p["Name"]
+
+                organizations_complete["organizationalUnits"][o]["nestedOus"][
+                    find_ou_name(reference_outs_list, a['Id'])] = {
+
+                    "Id": a['Id'],
+                    "Name": a['Name'],
+                    "accounts": [],
+                    "nestedOus": {}
+
+                }
+                # print(organizations_complete["organizationalUnits"][o]["nestedOus"])
+                if len(organizations_complete["organizationalUnits"][o]["nestedOus"]) > 0:
+                    new_list_ous = organizations_complete["organizationalUnits"][o]["nestedOus"]
+
+                    new_list_ous = plop_dict_out(ous_list=list_ous, ou=new_list_ous)
+                    organizations_complete = map_organizations_complete(
+                        organizations_complete=organizations_complete,
+                        list_ous=new_list_ous,
+                        llist_accounts=llist_accounts,
+                        reference_outs_list=reference_outs_list)
+
+    return organizations_complete
+
+
+def plop_dict_out(ous_list: list, ou, ):
+    """
+    Clean list.
+
+    :param ous_list:
+    :param ou:
+    :return:
+    """
+    for o in ou.keys():
+
+        # for c in ou.keys():
+        for unit in ous_list:
+            if unit["Id"] == ou[o]["Id"]:
+                ous_list.remove(unit)
+
+    return ous_list
+
+
+def set_accounts_tree(llist_accounts, organizations_complete, list_ous):
+    """
+    Set accounts tree.
+
+    :param llist_accounts:
+    :param organizations_complete:
+    :param list_ous:
+    :return:
+    """
+    # Iterate in list accounts to get parent ous
+    for c, i in zip(llist_accounts, range(len(llist_accounts))):
+        # print(f"\n    aa_{i}= OrganizationsAccount(\"{c['account']}\")", file=f)
+        for p in c["parents"]:
+            if p["Type"] == "ROOT":
+                organizations_complete["noOutAccounts"].append(
+                    {
+                        "account": c["account"],
+                        "name": c['name']
+                    }
+                )
+
+            for o, j in zip(list_ous, range(len(list_ous))):
+                if p["Id"] == o["Id"] and p["Type"] == "ORGANIZATIONAL_UNIT":
+                    organizations_complete["organizationalUnits"][find_ou_name(list_ous, o['Id'])]["accounts"][
+                        c['name']] = {
+                        "account": c["account"],
+                        "name": c['name']
+                    }
+
+    return organizations_complete
+
+
 def graph_organizations(diagrams_path, region, auto):
     """
     Create organizations Graph.
@@ -228,7 +392,7 @@ def graph_organizations(diagrams_path, region, auto):
 
     print(
         Fore.BLUE
-        + emoji.emojize(":sparkle: Listing Organizational Units " + Fore.RESET)
+        + emoji.emojize(":sparkle: List Organizational Units " + Fore.RESET)
     )
     logging.debug("The Organizational Units list ")
     ous = list_organizational_units(parent_id=roots[0]["Id"], region=region)
@@ -265,6 +429,20 @@ def graph_organizations(diagrams_path, region, auto):
         list_ous=ous,
         list_accounts=i_accounts,
     )
+    file_name = "organizations_complete.json"
+    ## view in console
+    organizations_complete_f = set_accounts_tree(llist_accounts=i_accounts,
+                                                 organizations_complete=init_org_complete(org=organization,
+                                                                                          root_id=roots[0]["Id"],
+                                                                                          list_ous=i_ous),
+                                                 list_ous=i_ous)
+    organizations_complete_f = map_organizations_complete(
+        organizations_complete=organizations_complete_f,
+        llist_accounts=i_accounts, list_ous=i_ous, reference_outs_list=i_ous.copy()
+    )
+
+    save_results(results=organizations_complete_f, filename=f"{code_path}/{file_name}")
+
     if auto:
         print(f"{Fore.GREEN}❇️ Creating diagrams in {code_path}")
         command = os.system(f"cd {code_path} && python3 {template_file}")

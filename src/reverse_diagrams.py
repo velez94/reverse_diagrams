@@ -76,7 +76,7 @@ def main() -> int:
         "-wo",
         "--watch_graph_organization",
         help="Set if you want to see graph for your organization structure summary.\n"
-             "For example: %(prog)s watch  -wi diagrams/json/organizations.json",
+             "For example: %(prog)s watch  -wo diagrams/json/organizations.json",
 
     )
     watch_group.add_argument(
@@ -90,7 +90,7 @@ def main() -> int:
         "-wa",
         "--watch_graph_accounts_assignments",
         help="Set if you want to see graph for your IAM Center- Accounts assignments. \n"
-             "For example: %(prog)s watch  -wi diagrams/json/account_assignments.json.json",
+             "For example: %(prog)s watch  -wa diagrams/json/account_assignments.json.json",
 
     )
 

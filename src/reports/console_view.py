@@ -3,7 +3,6 @@ from rich.console import Console
 from rich.columns import Columns
 from rich.panel import Panel
 from colorama import Fore
-from rich.progress import track
 import inquirer
 
 
@@ -49,30 +48,38 @@ def pretty_members(members):
     return string
 
 
-def create_console_view(file_path="diagrams/json/groups.json"):
+def create_group_console_view(groups):
     """
     Create tree.
 
-    :param file_path:
+    :param groups:
     :return:
     """
-    try:
-        c = load_json(file_path)
-        members = get_members(c)
-        console = Console()
-        c = [Panel(f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}", expand=True) for group in c]
-        console.print(Columns(c))
-    except FileNotFoundError:
+    members = get_members(groups)
+    console = Console()
+    c = [Panel(f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}", expand=True) for group in groups]
+    console.print(Columns(c))
 
-        print(f"{Fore.RED}File not found. {Fore.RESET}")
-        raise
+
+def single_create_group_assignments_view(members, group_name):
+    """
+    Create tree.
+
+    :param group_name:
+    :param members:
+    :return:
+    """
+
+    console = Console()
+    c = [Panel(f"[b]{group_name}[/b]\n[blue]{pretty_members(members)}", expand=True)]
+    console.print(Columns(c))
 
 
 def create_string_account_assignment(account_assignment):
     """
     Create string account assignment.
 
-    :param account_assignments:
+    :param account_assignment:
     :return:
     """
     string = ""
@@ -110,7 +117,6 @@ def single_create_account_assignments_view(assign, account_name):
     Create tree.
 
     :param account_name:
-    :param control:
     :param assign:
     :return:
     """
@@ -147,6 +153,23 @@ def create_console_view_from_input(assign):
         con = continue_ans['ans']
 
 
+def ask_control(case):
+    """
+    Ask control.
+
+    :type case: object
+    :param case:
+    :return:
+    """
+    control_ = [inquirer.List(name='ans',
+                              message=f"Do you want to watch all {case}?",
+                              choices=['all', 'one-at-time'], )
+                ]
+    control_ans = inquirer.prompt(control_)
+    control = control_ans['ans']
+    return control
+
+
 def create_account_assignments_view(assign):
     """
     Create tree.
@@ -154,12 +177,7 @@ def create_account_assignments_view(assign):
     :param assign:
     :return:
     """
-    control_ = [inquirer.List(name='ans',
-                              message="Do you want to watch all account assignments or account by account?",
-                              choices=['all', 'one-at-time'], )
-                ]
-    control_ans = inquirer.prompt(control_)
-    control = control_ans['ans']
+    control = ask_control(case="account assignments or account by account")
     if control == 'one-at-time':
         create_console_view_from_input(assign=assign)
     else:
@@ -175,7 +193,7 @@ def create_account_assignments_view(assign):
 
 def watch_on_demand(args, ):
     """
-    Watch on demand graphs in cosole.
+    Watch on demand graphs in console.
 
     :param args:
     :return:
@@ -187,4 +205,5 @@ def watch_on_demand(args, ):
         assign = load_json(args.watch_graph_accounts_assignments)
         create_account_assignments_view(assign=assign)
     if args.watch_graph_identity:
-        create_console_view(file_path=args.watch_graph_identity)
+        c = load_json(args.watch_graph_identity)
+        create_group_console_view(groups=c)

@@ -24,7 +24,7 @@ from .describe_sso import (
     list_instances,
     list_permissions_set,
 )
-from ..reports.console_view import create_console_view, create_account_assignments_view
+from ..reports.console_view import create_group_console_view, create_account_assignments_view, load_json
 
 
 def list_groups_pag(identity_store_id, region, next_token: str = None):
@@ -483,8 +483,8 @@ def graph_identity_center(diagrams_path, region, auto):
             print(Fore.RED + "❌ Error creating diagrams")
             print(command)
 
-        create_console_view(file_path=f"{json_path}/groups.json")
-        create_account_assignments_view(file_path=f"{json_path}/account_assignments.json")
+        create_group_console_view(groups= d_groups)#(f"{json_path}/groups.json")
+        create_account_assignments_view(assign=f_accounts)#load_json(f"{json_path}/account_assignments.json"))
     else:
         print(
             Fore.YELLOW

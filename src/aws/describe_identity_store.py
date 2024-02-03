@@ -15,6 +15,10 @@ from ..dgms.graph_template import (
     graph_template_sso,
     graph_template_sso_complete,
 )
+from ..reports.console_view import (
+    create_account_assignments_view,
+    create_group_console_view,
+)
 from ..reports.save_results import save_results
 from .describe_organization import list_accounts
 from .describe_sso import (
@@ -24,7 +28,6 @@ from .describe_sso import (
     list_instances,
     list_permissions_set,
 )
-from ..reports.console_view import create_group_console_view, create_account_assignments_view, load_json
 
 
 def list_groups_pag(identity_store_id, region, next_token: str = None):
@@ -59,8 +62,7 @@ def list_groups(identity_store_id, region):
     identity_client = client("identitystore", region_name=region)
 
     groups = identity_client.list_groups(
-        IdentityStoreId=identity_store_id,
-        MaxResults=20
+        IdentityStoreId=identity_store_id, MaxResults=20
     )
 
     logging.info(groups)
@@ -278,7 +280,7 @@ def extend_account_assignments(accounts_list, permissions_sets, store_arn, regio
     for p, y in zip(
         permissions_sets,
         track(
-            range(len(permissions_sets) ),
+            range(len(permissions_sets)),
             description="Getting account assignments ...",
         ),
     ):
@@ -314,7 +316,7 @@ def add_users_and_groups_assign(
     for a, y in zip(
         account_assignments_list,
         track(
-            range(len(account_assignments_list) ),
+            range(len(account_assignments_list)),
             description="Create user and groups assignments ...",
         ),
     ):
@@ -483,8 +485,10 @@ def graph_identity_center(diagrams_path, region, auto):
             print(Fore.RED + "❌ Error creating diagrams")
             print(command)
 
-        create_group_console_view(groups= d_groups)#(f"{json_path}/groups.json")
-        create_account_assignments_view(assign=f_accounts)#load_json(f"{json_path}/account_assignments.json"))
+        create_group_console_view(groups=d_groups)  # (f"{json_path}/groups.json")
+        create_account_assignments_view(
+            assign=f_accounts
+        )  # load_json(f"{json_path}/account_assignments.json"))
     else:
         print(
             Fore.YELLOW

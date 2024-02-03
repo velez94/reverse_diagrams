@@ -22,10 +22,11 @@
 
 > Continuous Documentation Tool - Documentation as Code Tool
 
-This package create reverse diagrams  based on your current state in your cloud environment.
+This package create diagrams and help to audit your services from your shell.
+
 # Requirement
 
-AWS programmatic access using AWS CLI. :arrow_right: [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
+AWS programmatic access using AWS CLI.  [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)
 
 
 # Install 
@@ -138,19 +139,47 @@ Create view of diagrams in console based on kind of diagram and json file.:
                         diagrams/json/account_assignments.json.jso
 ```
 
-## Service supported
+# Service supported
 
-#### AWS Organizations
+## AWS Organizations
 
 ```commandline
 reverse_diagrams -p my-profile -o -r us-east-2
 ```
-#### Identity and Access Manager Center (SSO)
+## Identity and Access Manager Center (SSO)
 
 ```commandline
 reverse_diagrams -p my-profile -i -r us-east-2
 ```
-## Additional Commands
+# Additional Commands
+
+## watch
+You can watch the configuration and summary in your shell based on json files generated previously.
+
+### Options
+
+```commandline
+$ reverse_diagrams watch -h 
+usage: reverse_diagrams watch [-h] [-wo WATCH_GRAPH_ORGANIZATION] [-wi WATCH_GRAPH_IDENTITY] [-wa WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS]
+
+Create view of diagrams in console based on kind of diagram and json file.
+
+options:
+  -h, --help            show this help message and exit
+
+Create view of diagrams in console based on kind of diagram and json file.:
+  -wo WATCH_GRAPH_ORGANIZATION, --watch_graph_organization WATCH_GRAPH_ORGANIZATION
+                        Set if you want to see graph for your organization structure summary. For example: reverse_diagrams watch watch -wo diagrams/json/organizations.json
+  -wi WATCH_GRAPH_IDENTITY, --watch_graph_identity WATCH_GRAPH_IDENTITY
+                        Set if you want to see graph for your groups and users. For example: reverse_diagrams watch watch -wi diagrams/json/groups.json
+  -wa WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS, --watch_graph_accounts_assignments WATCH_GRAPH_ACCOUNTS_ASSIGNMENTS
+                        Set if you want to see graph for your IAM Center- Accounts assignments. For example: reverse_diagrams watch watch -wa diagrams/json/account_assignments.json
+
+```
+
+For example, to watch account assignments: 
+
+![view Acoount assigments](docs/images/show_console_view.gif)
 
 ### Combine the options
 

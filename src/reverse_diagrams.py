@@ -8,8 +8,8 @@ from boto3 import setup_default_session
 from .aws.describe_identity_store import graph_identity_center
 from .aws.describe_organization import graph_organizations
 from .banner.banner import get_version
-from .version import __version__
 from .reports.console_view import watch_on_demand
+from .version import __version__
 
 
 def main() -> int:
@@ -22,7 +22,7 @@ def main() -> int:
     parser = argparse.ArgumentParser(
         prog="reverse_diagrams",
         description="Create architecture diagram, inspect and audit your AWS services from your current state.",
-        epilog="Thanks for using %(prog)s!"
+        epilog="Thanks for using %(prog)s!",
     )
 
     parser.add_argument(
@@ -66,7 +66,7 @@ def main() -> int:
         name="watch",
         description="Create view of diagrams in console based on kind of diagram and json file.",
         help="Create pretty console view: \n"
-             "For example: %(prog)s watch -wi diagrams/json/account_assignments.json ",
+        "For example: %(prog)s watch -wi diagrams/json/account_assignments.json ",
     )
     # Add idp options
     watch_group = watch_parser.add_argument_group(
@@ -76,22 +76,19 @@ def main() -> int:
         "-wo",
         "--watch_graph_organization",
         help="Set if you want to see graph for your organization structure summary.\n"
-             "For example: %(prog)s watch  -wo diagrams/json/organizations.json",
-
+        "For example: %(prog)s watch  -wo diagrams/json/organizations.json",
     )
     watch_group.add_argument(
         "-wi",
         "--watch_graph_identity",
         help="Set if you want to see graph for your groups and users. \n"
-             "For example: %(prog)s watch  -wi diagrams/json/groups.json",
-
+        "For example: %(prog)s watch  -wi diagrams/json/groups.json",
     )
     watch_group.add_argument(
         "-wa",
         "--watch_graph_accounts_assignments",
         help="Set if you want to see graph for your IAM Center- Accounts assignments. \n"
-             "For example: %(prog)s watch  -wa diagrams/json/account_assignments.json.json",
-
+        "For example: %(prog)s watch  -wa diagrams/json/account_assignments.json",
     )
 
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
@@ -126,7 +123,6 @@ def main() -> int:
             diagrams_path=diagrams_path, region=region, auto=args.auto_create
         )
     if args.commands == "watch":
-
         watch_on_demand(args=args)
 
     if args.version:

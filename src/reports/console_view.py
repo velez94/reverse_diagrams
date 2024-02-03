@@ -1,9 +1,10 @@
+"""Create Console View."""
 import json
-from rich.console import Console
-from rich.columns import Columns
-from rich.panel import Panel
-from colorama import Fore
+
 import inquirer
+from rich.columns import Columns
+from rich.console import Console
+from rich.panel import Panel
 
 
 # load json file from path function
@@ -14,7 +15,7 @@ def load_json(path):
     :param path:
     :return:
     """
-    with open(path, 'r') as f:
+    with open(path, "r") as f:
         return json.load(f)
 
 
@@ -28,7 +29,7 @@ def get_members(group):
     members_groups = {}
     for m in group:
         members_groups[group[m]["group_name"]] = []
-        for mm in group[m]['members']:
+        for mm in group[m]["members"]:
             members_groups[group[m]["group_name"]].append(mm["MemberId"]["UserName"])
 
     return members_groups
@@ -57,7 +58,13 @@ def create_group_console_view(groups):
     """
     members = get_members(groups)
     console = Console()
-    c = [Panel(f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}", expand=True) for group in groups]
+    c = [
+        Panel(
+            f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}",
+            expand=True,
+        )
+        for group in groups
+    ]
     console.print(Columns(c))
 
 
@@ -69,7 +76,6 @@ def single_create_group_assignments_view(members, group_name):
     :param members:
     :return:
     """
-
     console = Console()
     c = [Panel(f"[b]{group_name}[/b]\n[blue]{pretty_members(members)}", expand=True)]
     console.print(Columns(c))
@@ -83,9 +89,12 @@ def create_string_account_assignment(account_assignment):
     :return:
     """
     string = ""
-    if account_assignment['PrincipalType'] == "GROUP" and "GroupName" in account_assignment.keys():
+    if (
+        account_assignment["PrincipalType"] == "GROUP"
+        and "GroupName" in account_assignment.keys()
+    ):
         string += f"GroupName: {account_assignment['GroupName']}\n"
-    elif account_assignment['PrincipalType'] == "USER":
+    elif account_assignment["PrincipalType"] == "USER":
         string += f"UserName: {account_assignment['UserName']}\n"
     if "PermissionSetName" in account_assignment.keys():
         string += f"PermissionSetName: {account_assignment['PermissionSetName']}\n\n"
@@ -102,7 +111,6 @@ def pretty_account_assignments(accounts: dict):
     """
     string = ""
     if isinstance(accounts, dict):
-
         for a in accounts.keys():
             for c in accounts[a]:
                 string += create_string_account_assignment(account_assignment=c)
@@ -120,9 +128,13 @@ def single_create_account_assignments_view(assign, account_name):
     :param assign:
     :return:
     """
-
     console = Console()
-    c = [Panel(f"[b]{account_name}[/b]\n[blue]{pretty_account_assignments(assign)}", expand=True)]
+    c = [
+        Panel(
+            f"[b]{account_name}[/b]\n[blue]{pretty_account_assignments(assign)}",
+            expand=True,
+        )
+    ]
     console.print(Columns(c))
 
 
@@ -134,23 +146,29 @@ def create_console_view_from_input(assign):
     :return:
     """
     # execute while the user decide to leave
-    con = 'yes'
-    while con == 'yes':
+    con = "yes"
+    while con == "yes":
         questions = [
-            inquirer.List('account',
-                          message="Which account do you want to see?",
-                          choices=list(assign.keys()),
-                          ),
+            inquirer.List(
+                "account",
+                message="Which account do you want to see?",
+                choices=list(assign.keys()),
+            ),
         ]
         answers = inquirer.prompt(questions)
-        single_create_account_assignments_view(assign[answers['account']], account_name=answers['account'])
+        single_create_account_assignments_view(
+            assign[answers["account"]], account_name=answers["account"]
+        )
         # execute while the user decide to leave
-        continue_ = [inquirer.List(name='ans',
-                                   message="Do you want to watch another account ?",
-                                   choices=['yes', 'no'], )
-                     ]
+        continue_ = [
+            inquirer.List(
+                name="ans",
+                message="Do you want to watch another account ?",
+                choices=["yes", "no"],
+            )
+        ]
         continue_ans = inquirer.prompt(continue_)
-        con = continue_ans['ans']
+        con = continue_ans["ans"]
 
 
 def ask_control(case):
@@ -161,12 +179,15 @@ def ask_control(case):
     :param case:
     :return:
     """
-    control_ = [inquirer.List(name='ans',
-                              message=f"Do you want to watch all {case}?",
-                              choices=['all', 'one-at-time'], )
-                ]
+    control_ = [
+        inquirer.List(
+            name="ans",
+            message=f"Do you want to watch all {case}?",
+            choices=["all", "one-at-time"],
+        )
+    ]
     control_ans = inquirer.prompt(control_)
-    control = control_ans['ans']
+    control = control_ans["ans"]
     return control
 
 
@@ -178,12 +199,17 @@ def create_account_assignments_view(assign):
     :return:
     """
     control = ask_control(case="account assignments or account by account")
-    if control == 'one-at-time':
+    if control == "one-at-time":
         create_console_view_from_input(assign=assign)
     else:
-
         console = Console()
-        c = [Panel(f"[b]{account}[/b]\n[blue]{pretty_account_assignments(assign)}", expand=True) for account in assign]
+        c = [
+            Panel(
+                f"[b]{account}[/b]\n[blue]{pretty_account_assignments(assign)}",
+                expand=True,
+            )
+            for account in assign
+        ]
         console.print(Columns(c))
 
 
@@ -191,7 +217,10 @@ def create_account_assignments_view(assign):
 
 # pretty for organizations
 
-def watch_on_demand(args, ):
+
+def watch_on_demand(
+    args,
+):
     """
     Watch on demand graphs in console.
 

@@ -242,35 +242,47 @@ def search_ou_map(map_ou: dict, ou_id, level=0, tree="."):
     return None
 
 
-def init_org_complete(root_id, org, list_ous, ):
+def init_org_complete(
+    root_id,
+    org,
+    list_ous,
+):
+    """
+    Init organization dictionary.
+
+    :param root_id:
+    :param org:
+    :param list_ous:
+    :return:
+    """
     organizations_complete = {
         "rootId": root_id,
-        "masterAccountId": org['MasterAccountId'],
+        "masterAccountId": org["MasterAccountId"],
         "noOutAccounts": [],
-        "organizationalUnits": {}
+        "organizationalUnits": {},
     }
-
     # Iterate in ous for getting ous tree
     for a, i in zip(list_ous, range(len(list_ous))):
-
         for p in a["Parents"]:
             if p["Type"] == "ROOT":
-                organizations_complete["organizationalUnits"][a['Name']] = {
-                    "Id": a['Id'],
-                    "Name": a['Name'],
+                organizations_complete["organizationalUnits"][a["Name"]] = {
+                    "Id": a["Id"],
+                    "Name": a["Name"],
                     "accounts": {},
-                    "nestedOus": {}}
+                    "nestedOus": {},
+                }
     return organizations_complete
 
 
 # create organization complete map
-def map_organizations_complete(organizations_complete: dict,
-                               list_ous, llist_accounts,
-                               reference_outs_list,
-                               ):
+def map_organizations_complete(
+    organizations_complete: dict,
+    list_ous,
+    llist_accounts,
+    reference_outs_list,
+):
     """
     Create complete mapper file.
-
 
     :param reference_outs_list:
     :param organizations_complete:
@@ -278,44 +290,45 @@ def map_organizations_complete(organizations_complete: dict,
     :param llist_accounts:
     :return:
     """
-
     # Iterate in ous for getting ous tree
     for a, i in zip(list_ous, range(len(list_ous))):
-
         for p in a["Parents"]:
-
             if p["Type"] == "ORGANIZATIONAL_UNIT":
-
-                o = find_ou_name(reference_outs_list, p['Id'])
+                o = find_ou_name(reference_outs_list, p["Id"])
 
                 if o not in organizations_complete["organizationalUnits"].keys():
-                    p = search_ou_map(organizations_complete["organizationalUnits"], ou_id=o)
+                    p = search_ou_map(
+                        organizations_complete["organizationalUnits"], ou_id=o
+                    )
                     o = p["Name"]
 
                 organizations_complete["organizationalUnits"][o]["nestedOus"][
-                    find_ou_name(reference_outs_list, a['Id'])] = {
-
-                    "Id": a['Id'],
-                    "Name": a['Name'],
-                    "accounts": [],
-                    "nestedOus": {}
-
-                }
+                    find_ou_name(reference_outs_list, a["Id"])
+                ] = {"Id": a["Id"], "Name": a["Name"], "accounts": [], "nestedOus": {}}
                 # print(organizations_complete["organizationalUnits"][o]["nestedOus"])
-                if len(organizations_complete["organizationalUnits"][o]["nestedOus"]) > 0:
-                    new_list_ous = organizations_complete["organizationalUnits"][o]["nestedOus"]
+                if (
+                    len(organizations_complete["organizationalUnits"][o]["nestedOus"])
+                    > 0
+                ):
+                    new_list_ous = organizations_complete["organizationalUnits"][o][
+                        "nestedOus"
+                    ]
 
                     new_list_ous = plop_dict_out(ous_list=list_ous, ou=new_list_ous)
                     organizations_complete = map_organizations_complete(
                         organizations_complete=organizations_complete,
                         list_ous=new_list_ous,
                         llist_accounts=llist_accounts,
-                        reference_outs_list=reference_outs_list)
+                        reference_outs_list=reference_outs_list,
+                    )
 
     return organizations_complete
 
 
-def plop_dict_out(ous_list: list, ou, ):
+def plop_dict_out(
+    ous_list: list,
+    ou,
+):
     """
     Clean list.
 
@@ -324,7 +337,6 @@ def plop_dict_out(ous_list: list, ou, ):
     :return:
     """
     for o in ou.keys():
-
         # for c in ou.keys():
         for unit in ous_list:
             if unit["Id"] == ou[o]["Id"]:
@@ -348,18 +360,16 @@ def set_accounts_tree(llist_accounts, organizations_complete, list_ous):
         for p in c["parents"]:
             if p["Type"] == "ROOT":
                 organizations_complete["noOutAccounts"].append(
-                    {
-                        "account": c["account"],
-                        "name": c['name']
-                    }
+                    {"account": c["account"], "name": c["name"]}
                 )
 
             for o, j in zip(list_ous, range(len(list_ous))):
                 if p["Id"] == o["Id"] and p["Type"] == "ORGANIZATIONAL_UNIT":
-                    organizations_complete["organizationalUnits"][find_ou_name(list_ous, o['Id'])]["accounts"][
-                        c['name']] = {
+                    organizations_complete["organizationalUnits"][
+                        find_ou_name(list_ous, o["Id"])
+                    ]["accounts"][c["name"]] = {
                         "account": c["account"],
-                        "name": c['name']
+                        "name": c["name"],
                     }
 
     return organizations_complete
@@ -391,8 +401,7 @@ def graph_organizations(diagrams_path, region, auto):
     logging.debug(roots)
 
     print(
-        Fore.BLUE
-        + emoji.emojize(":sparkle: List Organizational Units " + Fore.RESET)
+        Fore.BLUE + emoji.emojize(":sparkle: List Organizational Units " + Fore.RESET)
     )
     logging.debug("The Organizational Units list ")
     ous = list_organizational_units(parent_id=roots[0]["Id"], region=region)
@@ -432,12 +441,20 @@ def graph_organizations(diagrams_path, region, auto):
     file_name = "organizations_complete.json"
     # view in console
     organizations_complete_f = map_organizations_complete(
-        organizations_complete=init_org_complete(org=organization, root_id=roots[0]["Id"],
-                                                 list_ous=i_ous),
-        llist_accounts=i_accounts, list_ous=i_ous, reference_outs_list=i_ous.copy()
+        organizations_complete=init_org_complete(
+            org=organization, root_id=roots[0]["Id"], list_ous=i_ous
+        ),
+        llist_accounts=i_accounts,
+        list_ous=i_ous,
+        reference_outs_list=i_ous.copy(),
     )
-    organizations_complete_f = set_accounts_tree(llist_accounts=i_accounts,
-                                                 organizations_complete=organizations_complete_f, list_ous=i_ous),
+    organizations_complete_f = (
+        set_accounts_tree(
+            llist_accounts=i_accounts,
+            organizations_complete=organizations_complete_f,
+            list_ous=i_ous,
+        ),
+    )
 
     save_results(results=organizations_complete_f, filename=f"{json_path}/{file_name}")
 

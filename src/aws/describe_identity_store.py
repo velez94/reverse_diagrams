@@ -435,8 +435,8 @@ def graph_identity_center(diagrams_path, region, auto):
     l_permissions_set_arn_name = extends_permissions_set(
         permissions_sets=permissions_set, store_arn=store_arn, region=region
     )
-
-    l_accounts = list_accounts(region=region)
+    org_client = client("organizations", region_name=region)
+    l_accounts = list_accounts(region=region, org_client =  org_client)
     account_assignments = extend_account_assignments(
         accounts_list=l_accounts,
         permissions_sets=l_permissions_set_arn_name,

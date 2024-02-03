@@ -11,7 +11,7 @@ from ..reports.save_results import save_results
 from .describe_sso import client
 
 
-def describe_organization(region):
+def describe_organization(region, org_client):
     """
     Describe the organization.
 
@@ -19,7 +19,7 @@ def describe_organization(region):
     :return:
     """
     print(f"{Fore.GREEN}❇️ Describe Organization {Fore.RESET}")
-    org_client = client("organizations", region_name=region)
+
     organization = org_client.describe_organization()
     organization = organization["Organization"]
     return organization
@@ -57,16 +57,17 @@ def list_organizational_units_pag(parent_id, region, next_token=None):
     return response_iterator["OrganizationalUnits"]
 
 
-def list_organizational_units(parent_id, region, org_units=None):
+def list_organizational_units(parent_id, region, org_client, org_units=None):
     """
     List Organizational units.
 
+    :param org_client:
     :param parent_id:
     :param region:
     :param org_units:
     :return:
     """
-    org_client = client("organizations", region_name=region)
+
     if org_units is None:
         org_units = []
     ous = org_client.list_organizational_units_for_parent(
@@ -77,9 +78,9 @@ def list_organizational_units(parent_id, region, org_units=None):
 
     if len(ous) >= 20:
         logging.info("Paginating ...")
-        add_ous = list_organizational_units_pag(
-            parent_id, region, next_token=ous["NextToken"]
-        )
+        add_ous = list_organizational_units_pag(parent_id=parent_id,
+                                                region=region, next_token=ous["NextToken"]
+                                                )
         for ou in add_ous:
             ous.append(ou)
         logging.debug(add_ous)
@@ -95,12 +96,13 @@ def list_organizational_units(parent_id, region, org_units=None):
             logging.debug(ou)
             if "Id" in ou.keys():
                 logging.debug(f"Search nested for: {ou['Name']}")
-                ous_next = list_organizational_units(
-                    ou["Id"], region=region, org_units=org_units
-                )
+                ous_next = list_organizational_units(parent_id=ou["Id"],
+                                                     region=region, org_units=org_units,
+                                                     org_client=org_client,
+                                                     )
                 logging.debug(ous_next)
                 if len(ous_next) > 0:
-                    logging.debug("Find Netsted")
+                    logging.debug("Find Nested")
 
     return org_units
 
@@ -158,14 +160,15 @@ def list_accounts_pag(region, next_token: str = None):
     return response["Accounts"]
 
 
-def list_accounts(region):
+def list_accounts(region, org_client):
     """
     List accounts.
 
+    :param org_client:
     :param region:
     :return:
     """
-    org_client = client("organizations", region_name=region)
+
     accounts = org_client.list_accounts()
     logging.info(accounts)
     l_account = accounts["Accounts"]
@@ -180,7 +183,7 @@ def list_accounts(region):
     return l_account
 
 
-def index_accounts(list_account, region):
+def index_accounts(list_account, region, org_client):
     """
     Index accounts.
 
@@ -189,7 +192,7 @@ def index_accounts(list_account, region):
     :return:
     """
     accounts = []
-    org_client = client("organizations", region_name=region)
+
     for a in list_account:
         response = org_client.list_parents(
             ChildId=a["Id"],
@@ -243,9 +246,9 @@ def search_ou_map(map_ou: dict, ou_id, level=0, tree="."):
 
 
 def init_org_complete(
-    root_id,
-    org,
-    list_ous,
+        root_id,
+        org,
+        list_ous,
 ):
     """
     Init organization dictionary.
@@ -276,10 +279,10 @@ def init_org_complete(
 
 # create organization complete map
 def map_organizations_complete(
-    organizations_complete: dict,
-    list_ous,
-    llist_accounts,
-    reference_outs_list,
+        organizations_complete: dict,
+        list_ous,
+        llist_accounts,
+        reference_outs_list,
 ):
     """
     Create complete mapper file.
@@ -307,8 +310,8 @@ def map_organizations_complete(
                 ] = {"Id": a["Id"], "Name": a["Name"], "accounts": [], "nestedOus": {}}
                 # print(organizations_complete["organizationalUnits"][o]["nestedOus"])
                 if (
-                    len(organizations_complete["organizationalUnits"][o]["nestedOus"])
-                    > 0
+                        len(organizations_complete["organizationalUnits"][o]["nestedOus"])
+                        > 0
                 ):
                     new_list_ous = organizations_complete["organizationalUnits"][o][
                         "nestedOus"
@@ -326,8 +329,8 @@ def map_organizations_complete(
 
 
 def plop_dict_out(
-    ous_list: list,
-    ou,
+        ous_list: list,
+        ou,
 ):
     """
     Clean list.
@@ -392,8 +395,8 @@ def graph_organizations(diagrams_path, region, auto):
         file_name=template_file,
         directory_path=code_path,
     )
-
-    organization = describe_organization(region=region)
+    org_client = client("organizations", region_name=region)
+    organization = describe_organization(region=region, org_client=org_client)
     print(Fore.BLUE + emoji.emojize(":sparkle: Getting Organization Info" + Fore.RESET))
     logging.debug(organization)
     logging.debug("The Roots Info")
@@ -404,7 +407,8 @@ def graph_organizations(diagrams_path, region, auto):
         Fore.BLUE + emoji.emojize(":sparkle: List Organizational Units " + Fore.RESET)
     )
     logging.debug("The Organizational Units list ")
-    ous = list_organizational_units(parent_id=roots[0]["Id"], region=region)
+
+    ous = list_organizational_units(parent_id=roots[0]["Id"], region=region, org_client=org_client)
     logging.debug(ous)
     logging.debug("The Organizational Units list with parents info")
     i_ous = index_ous(ous, region=region)
@@ -414,7 +418,8 @@ def graph_organizations(diagrams_path, region, auto):
         Fore.BLUE
         + emoji.emojize(":sparkle: Getting the Account list info" + Fore.RESET)
     )
-    l_accounts = list_accounts(region=region)
+
+    l_accounts = list_accounts(region=region, org_client=org_client)
     logging.debug(l_accounts)
     logging.debug("The Account list with parents info")
 
@@ -425,7 +430,8 @@ def graph_organizations(diagrams_path, region, auto):
             + Fore.RESET
         )
     )
-    i_accounts = index_accounts(l_accounts, region=region)
+
+    i_accounts = index_accounts(l_accounts, region=region, org_client=org_client)
     logging.debug(i_accounts)
 
     file_name = "organizations.json"

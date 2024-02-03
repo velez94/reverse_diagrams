@@ -26,6 +26,7 @@
 
 This package create diagrams and help to audit your services from your shell.
 
+![Complete demo](docs/images/complete_demo.gif)
 # Requirement
 
 AWS programmatic access using AWS CLI.  [Configuring the AWS CLI](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-configure.html)

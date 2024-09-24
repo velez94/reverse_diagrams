@@ -34,7 +34,7 @@ def main() -> int:
         help="Name of folder to save the diagrams python code files",
         default="diagrams",
     )
-    parser.add_argument("-r", "--region", help="AWS region", default="us-east-2")
+    parser.add_argument("-r", "--region", help="AWS region", default="us-east-1")
     parser.add_argument(
         "-o",
         "--graph_organization",

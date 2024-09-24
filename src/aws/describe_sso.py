@@ -14,6 +14,7 @@ def list_instances(region: str):
     sso_client = client("sso-admin", region_name=region)
     response = sso_client.list_instances()
 
+
     return response["Instances"]
 
 

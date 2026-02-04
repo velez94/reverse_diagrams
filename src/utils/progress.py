@@ -36,7 +36,7 @@ class ProgressTracker:
             TextColumn("[progress.percentage]{task.percentage:>3.0f}%"),
             TimeElapsedColumn(),
             console=self.console,
-            transient=False
+            transient=True  # Progress bars disappear after completion
         )
         self._active_tasks: List[TaskID] = []
     

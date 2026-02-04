@@ -178,7 +178,7 @@ class AWSClientManager:
                 if result_key in page:
                     all_results.extend(page[result_key])
             
-            logger.info(f"Retrieved {len(all_results)} items from paginated {service_name}.{method_name}")
+            logger.debug(f"Retrieved {len(all_results)} items from paginated {service_name}.{method_name}")
             return all_results
             
         except ClientError as e:

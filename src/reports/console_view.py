@@ -23,15 +23,38 @@ def get_members(group):
     """
     Get members name.
 
-    :param group:
-    :return:
+    :param group: Can be either a list of group dicts or a dict with numeric keys
+    :return: Dictionary mapping group names to member lists
     """
     members_groups = {}
-    for m in group:
-        members_groups[group[m]["group_name"]] = []
-        for mm in group[m]["members"]:
-            members_groups[group[m]["group_name"]].append(mm["MemberId"]["UserName"])
-
+    
+    # Handle new format (list of dicts with group_id, group_name, members)
+    if isinstance(group, list):
+        for g in group:
+            group_name = g.get("group_name", "Unknown Group")
+            members_groups[group_name] = []
+            for member in g.get("members", []):
+                # Handle both old and new member formats
+                if isinstance(member, dict):
+                    if "MemberId" in member and "UserName" in member["MemberId"]:
+                        members_groups[group_name].append(member["MemberId"]["UserName"])
+                    elif "UserName" in member:
+                        members_groups[group_name].append(member["UserName"])
+    
+    # Handle old format (dict with numeric keys)
+    elif isinstance(group, dict):
+        for key in group:
+            g = group[key]
+            if isinstance(g, dict) and "group_name" in g:
+                group_name = g["group_name"]
+                members_groups[group_name] = []
+                for member in g.get("members", []):
+                    if isinstance(member, dict):
+                        if "MemberId" in member and "UserName" in member["MemberId"]:
+                            members_groups[group_name].append(member["MemberId"]["UserName"])
+                        elif "UserName" in member:
+                            members_groups[group_name].append(member["UserName"])
+    
     return members_groups
 
 
@@ -227,12 +250,27 @@ def watch_on_demand(
     :param args:
     :return:
     """
-    if args.watch_graph_organization:
-        # create_console_view(file_path=f"{diagrams_path}/json/organizations.json")
-        print("Not available jet")
-    if args.watch_graph_accounts_assignments:
-        assign = load_json(args.watch_graph_accounts_assignments)
-        create_account_assignments_view(assign=assign)
-    if args.watch_graph_identity:
-        c = load_json(args.watch_graph_identity)
-        create_group_console_view(groups=c)
+    try:
+        if args.watch_graph_organization:
+            # create_console_view(file_path=f"{diagrams_path}/json/organizations.json")
+            print("Not available yet")
+        if args.watch_graph_accounts_assignments:
+            assign = load_json(args.watch_graph_accounts_assignments)
+            create_account_assignments_view(assign=assign)
+        if args.watch_graph_identity:
+            c = load_json(args.watch_graph_identity)
+            create_group_console_view(groups=c)
+    except FileNotFoundError as e:
+        print(f"❌ Error: File not found - {e}")
+        print("💡 Make sure you've generated the diagrams first using:")
+        print("   reverse_diagrams -o -i -p <profile> -r <region>")
+    except json.JSONDecodeError as e:
+        print(f"❌ Error: Invalid JSON file - {e}")
+        print("💡 The file may be corrupted. Try regenerating it.")
+    except KeyError as e:
+        print(f"❌ Error: Missing expected data in file - {e}")
+        print("💡 The file format may be outdated. Try regenerating it.")
+    except Exception as e:
+        print(f"❌ Unexpected error: {e}")
+        import traceback
+        traceback.print_exc()

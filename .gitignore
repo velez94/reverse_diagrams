@@ -252,3 +252,32 @@ cython_debug/
 #.idea/
 
 # End of https://www.toptal.com/developers/gitignore/api/python,pycharm+all
+
+# Project-specific ignores
+# Test files
+test.py
+test2.py
+test3.py
+testdata.txt
+
+# Generated diagrams folder (exclude entire folder)
+diagrams/
+
+# Terminal history files
+*terminal*history*
+CUserswalejAppDataLocalJetBrainsPyCharm*
+
+# Cast files (asciinema recordings)
+*.cast
+
+# Temporary summary files (keep only essential docs)
+README_UPDATE_SUMMARY.md
+LOG_LEVEL_CHANGES_SUMMARY.md
+IMPLEMENTATION_STATUS_UPDATE.md
+FINAL_STATUS_SUMMARY.md
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~

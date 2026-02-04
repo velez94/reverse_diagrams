@@ -1,38 +1,47 @@
 repos:
-- repo: https://github.com/astral-sh/ruff-pre-commit
-  # Ruff version.
-  rev: v0.1.11
-  hooks:
-    # Run the linter.
-    - id: ruff
-      args: [ --fix ]
-    # Run the formatter.
-    - id: ruff-format
-
--   repo: https://github.com/miki725/importanize
-    rev: 0.8.0-alpha2
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.4.0
     hooks:
-    -   id: importanize
+      - id: trailing-whitespace
+      - id: end-of-file-fixer
+      - id: check-yaml
+      - id: check-added-large-files
+      - id: check-json
+      - id: check-merge-conflict
+      - id: debug-statements
 
-#-   repo: https://github.com/PyCQA/bandit
-#    rev: 1.7.6
-#    hooks:
-#    - id: bandit
-
-
-#   repo: https://github.com/Lucas-C/pre-commit-hooks-safety
-#   rev: v1.7.2
-#   hooks:
-#   -   id: python-safety-dependencies-check
-#       args: [check, --full-report, --file]
-
--   repo: https://github.com/PyCQA/pydocstyle
-    rev: 6.3.0
+  - repo: https://github.com/psf/black
+    rev: 23.7.0
     hooks:
-    -   id: pydocstyle
+      - id: black
+        language_version: python3.8
+        args: [--line-length=88]
 
+  - repo: https://github.com/pycqa/isort
+    rev: 5.12.0
+    hooks:
+      - id: isort
+        args: ["--profile", "black", "--line-length=88"]
 
+  - repo: https://github.com/pycqa/flake8
+    rev: 6.0.0
+    hooks:
+      - id: flake8
+        args: [--max-line-length=88, --extend-ignore=E203,W503]
 
+  - repo: https://github.com/pre-commit/mirrors-mypy
+    rev: v1.5.1
+    hooks:
+      - id: mypy
+        additional_dependencies: [types-all]
+        args: [--ignore-missing-imports, --no-strict-optional]
 
-
-
+  - repo: local
+    hooks:
+      - id: pytest-check
+        name: pytest-check
+        entry: pytest
+        language: system
+        pass_filenames: false
+        always_run: true
+        args: [tests/unit/, -v, --tb=short]

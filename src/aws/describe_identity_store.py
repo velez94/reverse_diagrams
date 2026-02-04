@@ -406,6 +406,14 @@ def graph_identity_center(diagrams_path, region, auto):
         + emoji.emojize(":sparkle: Getting Identity store instance info" + Fore.RESET)
     )
     logging.debug(store_instances)
+    
+    # Check if IAM Identity Center is enabled
+    if not store_instances or len(store_instances) == 0:
+        error_msg = "No IAM Identity Center (SSO) instances found. Please enable IAM Identity Center in your AWS account."
+        print(Fore.RED + f"❌ {error_msg}" + Fore.RESET)
+        logging.error(error_msg)
+        raise ValueError(error_msg)
+    
     store_id = store_instances[0]["IdentityStoreId"]
     store_arn = store_instances[0]["InstanceArn"]
 

@@ -1,176 +1,203 @@
 """Describe SSO."""
 import logging
+from typing import List, Dict, Any, Optional
 
-from boto3 import client
+from .client_manager import get_client_manager
+from .exceptions import AWSServiceError
+from ..utils.progress import track_operation
+from ..config import get_config
+
+logger = logging.getLogger(__name__)
 
 
-def list_instances(region: str):
+def list_instances(region: str) -> List[Dict[str, Any]]:
     """
-    List all instances in the region.
+    List all SSO instances in the region.
 
-    :param region:
-    :return:
+    Args:
+        region: AWS region name
+
+    Returns:
+        List of SSO instances
+
+    Raises:
+        AWSServiceError: If the API call fails
     """
-    sso_client = client("sso-admin", region_name=region)
-    response = sso_client.list_instances()
-
-
-    return response["Instances"]
-
-
-# def list account assignments with pagination
-def list_account_assignments_pag(
-    instance_arn, account_id, permission_set_arn, region, next_token
-):
-    """
-    List all account assignments.
-
-    :param instance_arn:
-    :param account_id:
-    :param permission_set_arn:
-    :param region:
-    :return:
-
-    """
-    sso_client = client("sso-admin", region_name=region)
-    paginator = sso_client.get_paginator("list_account_assignments")
-    response_iterator = paginator.paginate(
-        InstanceArn=instance_arn,
-        AccountId=account_id,
-        PermissionSetArn=permission_set_arn,
-        PaginationConfig={
-            "MaxItems": 1000,
-            "PageSize": 20,
-            "StartingToken": next_token,
-        },
-    )
-    return response_iterator["AccountAssignments"]
+    client_manager = get_client_manager(region=region)
+    
+    with track_operation("Listing SSO instances") as task_id:
+        response = client_manager.call_api("sso-admin", "list_instances")
+        instances = response.get("Instances", [])
+        logger.info(f"Found {len(instances)} SSO instances")
+        return instances
 
 
 def list_account_assignments(
-    instance_arn, account_id, permission_set_arn, region, sso_client
-):
+    instance_arn: str, 
+    account_id: str, 
+    permission_set_arn: str, 
+    region: str
+) -> List[Dict[str, Any]]:
     """
-    List all account assignments.
+    List all account assignments for a permission set.
 
-    :param sso_client:
-    :param instance_arn:
-    :param account_id:
-    :param permission_set_arn:
-    :param region:
-    :return:
+    Args:
+        instance_arn: SSO instance ARN
+        account_id: AWS account ID
+        permission_set_arn: Permission set ARN
+        region: AWS region name
 
+    Returns:
+        List of account assignments
     """
-    response = sso_client.list_account_assignments(
-        InstanceArn=instance_arn,
-        AccountId=account_id,
-        PermissionSetArn=permission_set_arn,
-        MaxResults=50,
-    )
-    account_assignments = response["AccountAssignments"]
-    if len(response["AccountAssignments"]) >= 50:
-        logging.info("Paginating ...")
-        response_iterator = list_account_assignments_pag(
-            instance_arn,
-            account_id,
-            permission_set_arn,
-            region,
-            next_token=response["NextToken"],
+    client_manager = get_client_manager(region=region)
+    config = get_config()
+    
+    try:
+        # Use paginated API call for better handling of large result sets
+        assignments = client_manager.paginate_api_call(
+            "sso-admin",
+            "list_account_assignments",
+            "AccountAssignments",
+            InstanceArn=instance_arn,
+            AccountId=account_id,
+            PermissionSetArn=permission_set_arn,
+            PaginationConfig={
+                'MaxItems': config.pagination.max_items,
+                'PageSize': config.pagination.default_page_size
+            }
         )
-        for response in response_iterator:
-            logging.debug(response)
-            account_assignments.append(response["AccountAssignments"])
-            logging.info(response["AccountAssignments"])
-    return account_assignments
+        
+        logger.debug(f"Retrieved {len(assignments)} account assignments for account {account_id}")
+        return assignments
+        
+    except Exception as e:
+        logger.error(f"Failed to list account assignments for account {account_id}: {e}")
+        raise AWSServiceError(f"Failed to list account assignments: {e}")
 
 
-def list_permissions_set_pag(instance_arn, region, next_token):
+def list_permissions_set(instance_arn: str, region: str) -> List[str]:
     """
-    List all permission set in a region.
+    List all permission sets in an SSO instance.
 
-    :param next_token:
-    :param instance_arn:
-    :param region:
-    :return:
+    Args:
+        instance_arn: SSO instance ARN
+        region: AWS region name
+
+    Returns:
+        List of permission set ARNs
     """
-    sso_client = client("sso-admin", region_name=region)
-    paginator = sso_client.get_paginator("list_permission_sets")
-    response_iterator = paginator.paginate(
-        InstanceArn=instance_arn,
-        PaginationConfig={
-            "MaxItems": 1000,
-            "PageSize": 20,
-            "StartingToken": next_token,
-        },
-    )
-    response_iterator = response_iterator.build_full_result()
-    return response_iterator["PermissionSets"]
+    client_manager = get_client_manager(region=region)
+    config = get_config()
+    
+    with track_operation("Listing permission sets") as task_id:
+        try:
+            permission_sets = client_manager.paginate_api_call(
+                "sso-admin",
+                "list_permission_sets",
+                "PermissionSets",
+                InstanceArn=instance_arn,
+                PaginationConfig={
+                    'MaxItems': config.pagination.max_items,
+                    'PageSize': config.pagination.default_page_size
+                }
+            )
+            
+            logger.info(f"Found {len(permission_sets)} permission sets")
+            return permission_sets
+            
+        except Exception as e:
+            logger.error(f"Failed to list permission sets: {e}")
+            raise AWSServiceError(f"Failed to list permission sets: {e}")
 
 
-def list_permissions_set(instance_arn, region):
+def list_permission_provisioned(account_id: str, instance_arn: str, region: str) -> List[str]:
     """
-    List all permission set in a region.
+    List permission sets provisioned to an account.
 
-    :param instance_arn:
-    :param region:
-    :return:
+    Args:
+        account_id: AWS account ID
+        instance_arn: SSO instance ARN
+        region: AWS region name
+
+    Returns:
+        List of provisioned permission set ARNs
     """
-    sso_client = client(
-        "sso-admin",
-        region_name=region,
-    )
-    response = sso_client.list_permission_sets(InstanceArn=instance_arn, MaxResults=20)
-    logging.debug(response)
-    permissions_set = response["PermissionSets"]
-
-    if len(response["PermissionSets"]) >= 20:
-        logging.info("Paginating ...")
-        response_iterator = list_permissions_set_pag(
-            instance_arn, region, next_token=response["NextToken"]
+    client_manager = get_client_manager(region=region)
+    
+    try:
+        response = client_manager.call_api(
+            "sso-admin",
+            "list_permission_sets_provisioned_to_account",
+            InstanceArn=instance_arn,
+            AccountId=account_id
         )
-        for response in response_iterator:
-            logging.debug(response)
-            permissions_set.append(response)
-            logging.info(response)
+        
+        permission_sets = response.get("PermissionSets", [])
+        logger.debug(f"Found {len(permission_sets)} provisioned permission sets for account {account_id}")
+        return permission_sets
+        
+    except Exception as e:
+        logger.error(f"Failed to list provisioned permission sets for account {account_id}: {e}")
+        raise AWSServiceError(f"Failed to list provisioned permission sets: {e}")
 
-    return permissions_set
 
-
-def list_permission_provisioned(account_id, instance_arn, region):
+def extends_permissions_set(
+    permissions_sets: List[str], 
+    store_arn: str, 
+    region: str
+) -> Dict[str, str]:
     """
-    List permission provisioned.
+    Get detailed information for permission sets.
 
-    :param account_id:
-    :param instance_arn:
-    :param region:
-    :return:
+    Args:
+        permissions_sets: List of permission set ARNs
+        store_arn: SSO instance ARN
+        region: AWS region name
+
+    Returns:
+        Dictionary mapping permission set ARN to name
     """
-    l_client = client("sso-admin", region_name=region)
-    response = l_client.list_permission_sets_provisioned_to_account(
-        InstanceArn=instance_arn,
-        AccountId=account_id,
-    )
-    logging.debug(response)
-    return response["PermissionSets"]
+    client_manager = get_client_manager(region=region)
+    permissions_map = {}
+    
+    with track_operation(f"Getting details for {len(permissions_sets)} permission sets") as task_id:
+        for i, permission_set_arn in enumerate(permissions_sets):
+            try:
+                response = client_manager.call_api(
+                    "sso-admin",
+                    "describe_permission_set",
+                    InstanceArn=store_arn,
+                    PermissionSetArn=permission_set_arn
+                )
+                
+                permission_set = response.get("PermissionSet", {})
+                permissions_map[permission_set_arn] = permission_set.get("Name", "Unknown")
+                
+                # Update progress
+                if i % 5 == 0:  # Update every 5 items to avoid too frequent updates
+                    client_manager._progress_tracker.update_progress(task_id, advance=5)
+                
+            except Exception as e:
+                logger.warning(f"Failed to describe permission set {permission_set_arn}: {e}")
+                permissions_map[permission_set_arn] = "Unknown"
+    
+    logger.info(f"Retrieved details for {len(permissions_map)} permission sets")
+    return permissions_map
 
 
-def extends_permissions_set(permissions_sets, store_arn, region):
+# Backward compatibility function
+def client(service_name: str, region_name: str, profile: Optional[str] = None):
     """
-    List all permission set in a region.
-
-    :param permissions_sets:
-    :param store_arn:
-    :param region:
-    :return:
+    Backward compatibility function for existing code.
+    
+    Args:
+        service_name: AWS service name
+        region_name: AWS region
+        profile: AWS profile (optional)
+        
+    Returns:
+        Boto3 client instance
     """
-    sso_client = client("sso-admin", region_name=region)
-    l_permissions_set_arn_name = {}
-    for p in permissions_sets:
-        response = sso_client.describe_permission_set(
-            InstanceArn=store_arn, PermissionSetArn=p
-        )
-
-        l_permissions_set_arn_name[p] = response["PermissionSet"]["Name"]
-
-        logging.debug(response["PermissionSet"]["Name"])
-    return l_permissions_set_arn_name
+    from .client_manager import client as new_client
+    return new_client(service_name, region_name, profile)

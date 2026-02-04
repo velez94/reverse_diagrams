@@ -76,17 +76,17 @@ def create_group_console_view(groups):
     """
     Create tree.
 
-    :param groups:
+    :param groups: Can be either a list of group dicts or a dict with numeric keys
     :return:
     """
     members = get_members(groups)
     console = Console()
     c = [
         Panel(
-            f"[b][green]{group}[/b]\n[yellow]{pretty_members(members[group])}",
+            f"[b][green]{group_name}[/b]\n[yellow]{pretty_members(members[group_name])}",
             expand=True,
         )
-        for group in groups
+        for group_name in members.keys()
     ]
     console.print(Columns(c))
 

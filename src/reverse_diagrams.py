@@ -199,7 +199,7 @@ def main() -> int:
         # Setup logging
         setup_logging_from_args(args, config)
         
-        logging.info(f"Starting reverse_diagrams with arguments: {vars(args)}")
+        logging.debug(f"Starting reverse_diagrams with arguments: {vars(args)}")
         
         # Handle list plugins request
         if args.list_plugins:

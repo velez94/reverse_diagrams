@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "reverse_diagrams"
-version = "2.0.0"
+dynamic = ["version"]
 authors = [
     { name = "Alejandro Velez", email = "avelez@labvel.io" },
 ]
@@ -60,3 +60,6 @@ reverse_diagrams = "src.reverse_diagrams:main"
 
 [tool.hatch.build.targets.wheel]
 packages = ["src"]
+
+[tool.hatch.version]
+path = "src/version.py"

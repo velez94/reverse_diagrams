@@ -308,10 +308,10 @@ def main() -> int:
         "For example: %(prog)s watch  -wa diagrams/json/account_assignments.json",
     )
     watch_group.add_argument(
-        "--html",
+        "--generate-html",
         action="store_true",
         help="Generate HTML report from the specified JSON file instead of console view. "
-             "Example: reverse_diagrams watch -wi groups.json --html"
+             "Example: reverse_diagrams watch -wi groups.json --generate-html"
     )
 
     parser.add_argument("-v", "--version", help="Show version", action="store_true")

@@ -41,7 +41,7 @@ Created `create_organizations_console_view()` function that displays:
 
 **Dual Mode Support:**
 - Console view mode (default): Beautiful terminal display
-- HTML mode (with `--html` flag): Generates HTML report
+- HTML mode (with `--generate-html` flag): Generates HTML report
 
 ### 3. Usage Examples
 
@@ -50,10 +50,10 @@ Created `create_organizations_console_view()` function that displays:
 reverse_diagrams watch -wo diagrams/json/organizations.json
 
 # Generate HTML report from organizations data
-reverse_diagrams watch -wo diagrams/json/organizations.json --html
+reverse_diagrams watch -wo diagrams/json/organizations.json --generate-html
 
 # Custom HTML output path
-reverse_diagrams watch -wo diagrams/json/organizations.json --html --html-output reports/org.html
+reverse_diagrams watch -wo diagrams/json/organizations.json --generate-html --html-output reports/org.html
 ```
 
 ### 4. Console Output Example

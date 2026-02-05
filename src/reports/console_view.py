@@ -336,7 +336,7 @@ def watch_on_demand(
     """
     try:
         # Check if HTML generation is requested
-        if hasattr(args, 'html') and args.html:
+        if hasattr(args, 'generate_html') and args.generate_html:
             # Import HTML generation functions
             from .html_report import generate_report_from_files
             from ..utils.progress import get_progress_tracker

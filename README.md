@@ -196,8 +196,8 @@ reverse_diagrams --html-report --html-output reports/my_report.html
 reverse_diagrams -o -i --html-report -p labvel-master -r us-east-1
 
 # Generate HTML report from watch command
-reverse_diagrams watch -wi diagrams/json/groups.json --html
-reverse_diagrams watch -wo diagrams/json/organizations.json --html --html-output custom/report.html
+reverse_diagrams watch -wi diagrams/json/groups.json --generate-html
+reverse_diagrams watch -wo diagrams/json/organizations.json --generate-html --html-output custom/report.html
 ```
 
 **HTML Report Features:**
@@ -451,8 +451,8 @@ reverse_diagrams watch -wi diagrams/json/groups.json
 reverse_diagrams watch -wa diagrams/json/account_assignments.json
 
 # Generate HTML report from watch command
-reverse_diagrams watch -wo diagrams/json/organizations.json --html
-reverse_diagrams watch -wi diagrams/json/groups.json --html --html-output reports/groups.html
+reverse_diagrams watch -wo diagrams/json/organizations.json --generate-html
+reverse_diagrams watch -wi diagrams/json/groups.json --generate-html --html-output reports/groups.html
 ```
 
 For example, to watch account assignments: 

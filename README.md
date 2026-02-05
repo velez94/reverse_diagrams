@@ -183,6 +183,33 @@ reverse_diagrams --plugin ec2 -p labvel-master -r us-east-1
 reverse_diagrams --plugin organizations -p labvel-master -r us-east-1
 ```
 
+**Generating HTML Reports:**
+
+```commandline
+# Generate HTML report from existing JSON data (no AWS API calls)
+reverse_diagrams --html-report
+
+# Generate HTML report with custom output path
+reverse_diagrams --html-report --html-output reports/my_report.html
+
+# Generate diagrams AND HTML report in one command
+reverse_diagrams -o -i --html-report -p labvel-master -r us-east-1
+
+# Generate HTML report from watch command
+reverse_diagrams watch -wi diagrams/json/groups.json --html
+reverse_diagrams watch -wo diagrams/json/organizations.json --html --html-output custom/report.html
+```
+
+**HTML Report Features:**
+- 📄 Self-contained HTML files (no external dependencies)
+- 🎨 Modern, responsive design with gradient backgrounds
+- 📊 Interactive sections for Organizations, Groups, and Assignments
+- 🔍 Detailed statistics and visualizations
+- 💾 Works offline - no AWS credentials needed for report generation
+- 🚀 Fast generation from existing JSON data
+
+The HTML report provides a beautiful, shareable view of your AWS infrastructure that can be opened in any browser without requiring AWS access or additional tools.
+
 Then run `python3 graph_org.py` to create a png screenshot (`organizations-state.png`) for your current state.
 
 > Both files are saved into the current directory.
@@ -411,6 +438,23 @@ Create view of diagrams in console based on kind of diagram and json file.:
 
 ```
 
+**Watch Command Examples:**
+
+```commandline
+# View organizations structure in console
+reverse_diagrams watch -wo diagrams/json/organizations.json
+
+# View IAM Identity Center groups in console
+reverse_diagrams watch -wi diagrams/json/groups.json
+
+# View account assignments in console
+reverse_diagrams watch -wa diagrams/json/account_assignments.json
+
+# Generate HTML report from watch command
+reverse_diagrams watch -wo diagrams/json/organizations.json --html
+reverse_diagrams watch -wi diagrams/json/groups.json --html --html-output reports/groups.html
+```
+
 For example, to watch account assignments: 
 
 ![view Acoount assigments](docs/images/show_console_view.gif)
@@ -520,6 +564,37 @@ For more details, see the specification in `.kiro/specs/tag-based-filtering/`.
 ```commandline
 reverse_diagrams -o -i --concurrent -p my-profile -r us-east-1
 ```
+
+### HTML Report Generation Issues
+
+**Error:** "No JSON data files found"
+
+**Cause:** Trying to generate HTML report before creating diagrams.
+
+**Solution:**
+1. First generate the data: `reverse_diagrams -o -i -p my-profile -r us-east-1`
+2. Then generate HTML: `reverse_diagrams --html-report`
+3. Or do both in one command: `reverse_diagrams -o -i --html-report -p my-profile -r us-east-1`
+
+**Error:** "Permission denied" when writing HTML file
+
+**Cause:** Output directory is not writable.
+
+**Solution:**
+1. Check directory permissions: `ls -la diagrams/reports/`
+2. Use a custom output path: `reverse_diagrams --html-report --html-output ~/reports/aws.html`
+3. Ensure the directory exists or will be created
+
+**Issue:** HTML report is empty or missing sections
+
+**Cause:** JSON data files are corrupted or incomplete.
+
+**Solution:**
+1. Regenerate the JSON data: `reverse_diagrams -o -i -p my-profile -r us-east-1`
+2. Check JSON files are valid: `cat diagrams/json/organizations.json | python3 -m json.tool`
+3. Generate HTML again: `reverse_diagrams --html-report`
+
+**Tip:** HTML reports work offline and don't require AWS credentials - perfect for sharing with team members who don't have AWS access!
 
 This uses multi-threading to speed up AWS API calls significantly.
 

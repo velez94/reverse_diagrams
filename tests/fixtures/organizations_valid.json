@@ -1,0 +1,74 @@
+{
+  "organization": {
+    "Id": "o-test123456",
+    "Arn": "arn:aws:organizations::123456789012:organization/o-test123456",
+    "MasterAccountId": "123456789012",
+    "MasterAccountArn": "arn:aws:organizations::123456789012:account/o-test123456/123456789012",
+    "MasterAccountEmail": "admin@example.com"
+  },
+  "accounts": [
+    {
+      "Id": "123456789012",
+      "Arn": "arn:aws:organizations::123456789012:account/o-test123456/123456789012",
+      "Email": "admin@example.com",
+      "Name": "Management Account",
+      "Status": "ACTIVE",
+      "JoinedMethod": "CREATED",
+      "JoinedTimestamp": "2024-01-01T00:00:00Z"
+    },
+    {
+      "Id": "123456789013",
+      "Arn": "arn:aws:organizations::123456789012:account/o-test123456/123456789013",
+      "Email": "production@example.com",
+      "Name": "Production Account",
+      "Status": "ACTIVE",
+      "JoinedMethod": "INVITED",
+      "JoinedTimestamp": "2024-01-15T00:00:00Z"
+    },
+    {
+      "Id": "123456789014",
+      "Arn": "arn:aws:organizations::123456789012:account/o-test123456/123456789014",
+      "Email": "development@example.com",
+      "Name": "Development Account",
+      "Status": "ACTIVE",
+      "JoinedMethod": "CREATED",
+      "JoinedTimestamp": "2024-02-01T00:00:00Z"
+    }
+  ],
+  "organizational_units": [
+    {
+      "Id": "ou-test-prod",
+      "Arn": "arn:aws:organizations::123456789012:ou/o-test123456/ou-test-prod",
+      "Name": "Production"
+    },
+    {
+      "Id": "ou-test-dev",
+      "Arn": "arn:aws:organizations::123456789012:ou/o-test123456/ou-test-dev",
+      "Name": "Development"
+    }
+  ],
+  "organizations_complete": {
+    "noOutAccounts": [
+      {
+        "name": "Management Account",
+        "id": "123456789012"
+      }
+    ],
+    "organizationalUnits": {
+      "Production": {
+        "accounts": {
+          "Production Account": {
+            "id": "123456789013"
+          }
+        }
+      },
+      "Development": {
+        "accounts": {
+          "Development Account": {
+            "id": "123456789014"
+          }
+        }
+      }
+    }
+  }
+}

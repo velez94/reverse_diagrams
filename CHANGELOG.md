@@ -6,6 +6,38 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v2.1.0](https://github.com/velez94/reverse_diagrams/releases/tag/v2.1.0) - 2026-02-04
+
+<small>[Compare with v2.0.0](https://github.com/velez94/reverse_diagrams/compare/v2.0.0...v2.1.0)</small>
+
+### Features
+
+- **HTML Report Generation**: Complete HTML report generation feature with standalone and combined modes
+  - Added `--html-report` flag for generating HTML reports from JSON files
+  - Added `--html-output` flag for custom HTML output paths
+  - Added `--html` flag to watch command for HTML generation
+  - Self-contained HTML reports with no external dependencies
+  - Comprehensive validation and error handling with custom exceptions
+  - Offline generation capability (no AWS API calls required)
+- **Organizations Watch Command**: Implemented `-wo` (watch organizations) console view
+  - Rich console output with organization overview, root accounts, and OUs
+  - Supports both console view and HTML generation modes
+  - Handles multiple data formats with fallback support
+  - Color-coded panels with emoji icons for better visualization
+
+### Testing
+
+- Added 60+ comprehensive tests (unit, integration, property-based)
+- Property-based testing with hypothesis for HTML report generation
+- Integration tests for CLI workflows and watch commands
+- Unit tests for organizations console view functionality
+
+### Documentation
+
+- Updated README with HTML report generation examples
+- Added troubleshooting section for common issues
+- Documented new CLI flags and usage patterns
+- Created implementation guides for new features
 ## [v1.3.0](https://github.com/velez94/reverse_diagrams/releases/tag/v1.3.0) - 2024-02-03
 
 <small>[Compare with v1.2.0](https://github.com/velez94/reverse_diagrams/compare/v1.2.0...v1.3.0)</small>

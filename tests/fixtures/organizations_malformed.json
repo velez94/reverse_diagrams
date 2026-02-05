@@ -1,0 +1,12 @@
+{
+  "organization": {
+    "Id": "o-test123456",
+    "Arn": "arn:aws:organizations::123456789012:organization/o-test123456"
+  },
+  "accounts": [
+    {
+      "Id": "123456789012",
+      "Name": "Test Account"
+      // Missing closing brace - malformed JSON
+  ]
+}

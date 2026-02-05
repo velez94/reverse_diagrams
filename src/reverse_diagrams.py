@@ -3,6 +3,7 @@ import argparse
 import logging
 import sys
 from pathlib import Path
+from typing import Optional
 
 import argcomplete
 from colorama import Fore
@@ -13,6 +14,14 @@ from .aws.exceptions import AWSError, AWSCredentialsError, AWSPermissionError
 from .banner.banner import get_version
 from .config import get_config, Config
 from .reports.console_view import watch_on_demand
+from .reports.html_report import (
+    generate_report_from_files,
+    HTMLGenerationError,
+    JSONFileNotFoundError,
+    JSONParseError,
+    InvalidOutputPathError,
+    HTMLWriteError
+)
 from .version import __version__
 from .utils.progress import get_progress_tracker
 
@@ -38,10 +47,15 @@ def validate_arguments(args) -> None:
         except Exception as e:
             raise ValueError(f"Invalid output directory path: {e}")
     
+    # Validate HTML output flag usage
+    if hasattr(args, 'html_output') and args.html_output and not args.html_report:
+        raise ValueError("--html-output flag requires --html-report flag to be specified")
+    
     # Ensure at least one operation is selected
-    if not any([args.graph_organization, args.graph_identity, args.commands == "watch", args.list_plugins, args.plugins]):
+    if not any([args.graph_organization, args.graph_identity, args.commands == "watch", 
+                args.list_plugins, args.plugins, args.html_report]):
         if not args.version:
-            raise ValueError("Please specify at least one operation: -o, -i, or watch command")
+            raise ValueError("Please specify at least one operation: -o, -i, --html-report, or watch command")
 
 
 def setup_logging_from_args(args, config: Config) -> None:
@@ -76,6 +90,105 @@ def handle_aws_errors(func):
                 logging.exception("Full traceback:")
             sys.exit(1)
     return wrapper
+
+
+def generate_html_report_cli(
+    html_output: Optional[str] = None,
+    json_dir: str = "diagrams/json"
+) -> None:
+    """
+    Orchestrate HTML report generation from CLI.
+    
+    Args:
+        html_output: Custom output path for HTML report
+        json_dir: Directory containing JSON data files
+        
+    Raises:
+        JSONFileNotFoundError: If no JSON data files exist
+        InvalidOutputPathError: If output directory is not writable
+        JSONParseError: If JSON files are malformed
+        HTMLWriteError: If HTML file cannot be written
+    """
+    progress = get_progress_tracker()
+    
+    # Determine output path
+    output_path = html_output or "diagrams/reports/aws_report.html"
+    
+    # Check for JSON data files
+    json_path = Path(json_dir)
+    org_file = json_path / "organizations.json"
+    groups_file = json_path / "groups.json"
+    assignments_file = json_path / "account_assignments.json"
+    
+    # Determine which files exist
+    available_files = []
+    org_file_path = str(org_file) if org_file.exists() else None
+    groups_file_path = str(groups_file) if groups_file.exists() else None
+    assignments_file_path = str(assignments_file) if assignments_file.exists() else None
+    
+    if org_file_path:
+        available_files.append("organizations.json")
+    if groups_file_path:
+        available_files.append("groups.json")
+    if assignments_file_path:
+        available_files.append("account_assignments.json")
+    
+    if not available_files:
+        progress.show_error(
+            "No JSON data files found",
+            f"Please run with -o or -i flags to generate data first.\n"
+            f"Expected files in: {json_path}"
+        )
+        raise JSONFileNotFoundError(
+            f"No JSON data files found in {json_dir}. "
+            f"Please run with -o or -i flags to generate data first."
+        )
+    
+    # Generate HTML report with progress tracking
+    try:
+        progress.show_success(
+            "Generating HTML report",
+            f"Processing {len(available_files)} data file(s): {', '.join(available_files)}"
+        )
+        
+        html_path = generate_report_from_files(
+            organizations_file=org_file_path,
+            groups_file=groups_file_path,
+            assignments_file=assignments_file_path,
+            output_path=output_path
+        )
+        
+        # Count sections included
+        sections = []
+        if org_file_path:
+            sections.append("AWS Organizations")
+        if groups_file_path:
+            sections.append("IAM Identity Center Groups")
+        if assignments_file_path:
+            sections.append("Account Assignments")
+        
+        progress.show_success(
+            "HTML report generated successfully",
+            f"📄 Output: {html_path}\n"
+            f"📊 Sections: {len(sections)} ({', '.join(sections)})\n"
+            f"📁 Processed: {', '.join(available_files)}"
+        )
+        
+    except JSONFileNotFoundError as e:
+        progress.show_error("JSON file not found", str(e))
+        raise
+    except JSONParseError as e:
+        progress.show_error("Invalid JSON data", str(e))
+        raise
+    except InvalidOutputPathError as e:
+        progress.show_error("Invalid output path", str(e))
+        raise
+    except HTMLWriteError as e:
+        progress.show_error("Failed to write HTML file", str(e))
+        raise
+    except Exception as e:
+        progress.show_error("HTML generation failed", str(e))
+        raise
 
 
 @handle_aws_errors
@@ -143,6 +256,18 @@ def main() -> int:
         action="store_true",
         default=True
     )
+    parser.add_argument(
+        "--html-report",
+        help="Generate HTML report from JSON data files (works offline, no AWS credentials needed)",
+        action="store_true"
+    )
+    parser.add_argument(
+        "--html-output",
+        type=str,
+        metavar="PATH",
+        help="Custom output path for HTML report (default: diagrams/reports/aws_report.html). "
+             "Example: --html-output reports/my_report.html"
+    )
     
     # Create subparsers
     subparsers = parser.add_subparsers(
@@ -181,6 +306,12 @@ def main() -> int:
         "--watch_graph_accounts_assignments",
         help="Set if you want to see graph for your IAM Center- Accounts assignments. \n"
         "For example: %(prog)s watch  -wa diagrams/json/account_assignments.json",
+    )
+    watch_group.add_argument(
+        "--html",
+        action="store_true",
+        help="Generate HTML report from the specified JSON file instead of console view. "
+             "Example: reverse_diagrams watch -wi groups.json --html"
     )
 
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
@@ -284,6 +415,28 @@ def main() -> int:
         if args.commands == "watch":
             watch_on_demand(args=args)
             return 0
+        
+        # Handle HTML report generation (standalone or combined)
+        should_generate_html = args.html_report
+        should_generate_diagrams = args.graph_organization or args.graph_identity
+        
+        # If only HTML report is requested (no diagrams)
+        if should_generate_html and not should_generate_diagrams:
+            logging.info("Generating HTML report from existing JSON data")
+            try:
+                generate_html_report_cli(
+                    html_output=args.html_output,
+                    json_dir=f"{args.output_dir_path}/json"
+                )
+                return 0
+            except (JSONFileNotFoundError, JSONParseError, InvalidOutputPathError, HTMLWriteError) as e:
+                logging.error(f"{Fore.RED}❌ HTML generation failed: {e}{Fore.RESET}")
+                return 1
+            except Exception as e:
+                logging.error(f"{Fore.RED}❌ Unexpected error during HTML generation: {e}{Fore.RESET}")
+                if logging.getLogger().isEnabledFor(logging.DEBUG):
+                    logging.exception("Full traceback:")
+                return 1
         
         # Setup AWS client manager
         from .aws.client_manager import get_client_manager
@@ -406,6 +559,24 @@ def main() -> int:
                 graph_identity_center(
                     diagrams_path=diagrams_path, region=region, auto=args.auto_create
                 )
+        
+        # Generate HTML report if requested (combined with diagrams)
+        if should_generate_html and should_generate_diagrams:
+            logging.info("Generating HTML report from diagram data")
+            try:
+                generate_html_report_cli(
+                    html_output=args.html_output,
+                    json_dir=f"{args.output_dir_path}/json"
+                )
+            except (JSONFileNotFoundError, JSONParseError, InvalidOutputPathError, HTMLWriteError) as e:
+                logging.error(f"{Fore.RED}❌ HTML generation failed: {e}{Fore.RESET}")
+                logging.error(f"{Fore.YELLOW}💡 Diagrams were generated successfully, but HTML report failed.{Fore.RESET}")
+                return 1
+            except Exception as e:
+                logging.error(f"{Fore.RED}❌ Unexpected error during HTML generation: {e}{Fore.RESET}")
+                if logging.getLogger().isEnabledFor(logging.DEBUG):
+                    logging.exception("Full traceback:")
+                return 1
         
         logging.info("All operations completed successfully")
         return 0

@@ -1,0 +1,71 @@
+[
+  {
+    "group_id": "group-1234567890",
+    "group_name": "Administrators",
+    "description": "Administrator group with full access",
+    "members": [
+      {
+        "MemberId": {
+          "UserId": "user-admin1",
+          "UserName": "admin.user1"
+        },
+        "DisplayName": "Admin User 1",
+        "Email": "admin.user1@example.com"
+      },
+      {
+        "MemberId": {
+          "UserId": "user-admin2",
+          "UserName": "admin.user2"
+        },
+        "DisplayName": "Admin User 2",
+        "Email": "admin.user2@example.com"
+      }
+    ]
+  },
+  {
+    "group_id": "group-2345678901",
+    "group_name": "Developers",
+    "description": "Developer group with limited access",
+    "members": [
+      {
+        "MemberId": {
+          "UserId": "user-dev1",
+          "UserName": "dev.user1"
+        },
+        "DisplayName": "Developer User 1",
+        "Email": "dev.user1@example.com"
+      },
+      {
+        "MemberId": {
+          "UserId": "user-dev2",
+          "UserName": "dev.user2"
+        },
+        "DisplayName": "Developer User 2",
+        "Email": "dev.user2@example.com"
+      },
+      {
+        "MemberId": {
+          "UserId": "user-dev3",
+          "UserName": "dev.user3"
+        },
+        "DisplayName": "Developer User 3",
+        "Email": "dev.user3@example.com"
+      }
+    ]
+  },
+  {
+    "group_id": "group-3456789012",
+    "group_name": "ReadOnly",
+    "description": "Read-only access group",
+    "members": [
+      {
+        "MemberId": {
+          "UserId": "user-readonly1",
+          "UserName": "readonly.user1"
+        },
+        "DisplayName": "ReadOnly User 1",
+        "Email": "readonly.user1@example.com"
+      }
+    ]
+  }
+]

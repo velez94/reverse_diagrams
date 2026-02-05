@@ -1,0 +1,48 @@
+{
+  "Production Account": [
+    {
+      "AccountId": "123456789013",
+      "PermissionSetArn": "arn:aws:sso:::permissionSet/ssoins-1234567890/ps-admin",
+      "PermissionSetName": "AdministratorAccess",
+      "PrincipalType": "GROUP",
+      "PrincipalId": "group-1234567890",
+      "GroupName": "Administrators"
+    },
+    {
+      "AccountId": "123456789013",
+      "PermissionSetArn": "arn:aws:sso:::permissionSet/ssoins-1234567890/ps-readonly",
+      "PermissionSetName": "ReadOnlyAccess",
+      "PrincipalType": "GROUP",
+      "PrincipalId": "group-3456789012",
+      "GroupName": "ReadOnly"
+    }
+  ],
+  "Development Account": [
+    {
+      "AccountId": "123456789014",
+      "PermissionSetArn": "arn:aws:sso:::permissionSet/ssoins-1234567890/ps-poweruser",
+      "PermissionSetName": "PowerUserAccess",
+      "PrincipalType": "GROUP",
+      "PrincipalId": "group-2345678901",
+      "GroupName": "Developers"
+    },
+    {
+      "AccountId": "123456789014",
+      "PermissionSetArn": "arn:aws:sso:::permissionSet/ssoins-1234567890/ps-admin",
+      "PermissionSetName": "AdministratorAccess",
+      "PrincipalType": "GROUP",
+      "PrincipalId": "group-1234567890",
+      "GroupName": "Administrators"
+    }
+  ],
+  "Management Account": [
+    {
+      "AccountId": "123456789012",
+      "PermissionSetArn": "arn:aws:sso:::permissionSet/ssoins-1234567890/ps-admin",
+      "PermissionSetName": "AdministratorAccess",
+      "PrincipalType": "GROUP",
+      "PrincipalId": "group-1234567890",
+      "GroupName": "Administrators"
+    }
+  ]
+}

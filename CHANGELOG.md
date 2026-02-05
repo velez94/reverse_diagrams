@@ -6,6 +6,24 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v2.1.1](https://github.com/velez94/reverse_diagrams/releases/tag/v2.1.1) - 2026-02-05
+
+<small>[Compare with v2.1.0](https://github.com/velez94/reverse_diagrams/compare/v2.1.0...v2.1.1)</small>
+
+### Bug Fixes
+
+- **Ambiguous Option Error**: Fixed argparse ambiguous option error with watch command
+  - Renamed `--html` flag to `--generate-html` in watch subcommand
+  - Resolved conflict with `--html-report` and `--html-output` flags
+  - Updated all documentation and examples to use new flag name
+  - Watch command now works without ambiguity errors
+
+### Documentation
+
+- Updated README with correct `--generate-html` flag usage
+- Updated ORGANIZATIONS_WATCH_IMPLEMENTATION.md with new flag
+- Added AMBIGUOUS_FLAG_FIX.md documenting the issue and solution
+
 ## [v2.1.0](https://github.com/velez94/reverse_diagrams/releases/tag/v2.1.0) - 2026-02-04
 
 <small>[Compare with v2.0.0](https://github.com/velez94/reverse_diagrams/compare/v2.0.0...v2.1.0)</small>

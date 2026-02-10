@@ -6,6 +6,43 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v2.2.0](https://github.com/velez94/reverse_diagrams/releases/tag/v2.2.0) - 2026-02-10
+
+<small>[Compare with v2.1.1](https://github.com/velez94/reverse_diagrams/compare/v2.1.1...v2.2.0)</small>
+
+### Features
+
+- **Interactive Identity Center Explorer**: New interactive terminal-based explorer for AWS Organizations and IAM Identity Center
+  - Added `--explore` / `-e` flag to watch command for launching interactive mode
+  - Added `--json-dir` flag to specify custom JSON data directory
+  - Navigate through organizational units and accounts hierarchically
+  - View detailed IAM Identity Center assignments for any account
+  - Explore groups, users, and permission sets interactively
+  - Color-coded display with icons for different resource types
+  - Keyboard navigation with arrow keys, search, and selection
+  - Breadcrumb navigation showing current location in hierarchy
+  - Summary statistics for permission sets, groups, and users
+  - Graceful degradation when optional JSON files are missing
+  - Comprehensive error handling with actionable messages
+  - Handles large organizations (100+ accounts) with pagination support
+  - Responsive terminal rendering (80-200 character widths)
+
+### Testing
+
+- Added 103 comprehensive tests for explorer feature
+  - 23 property-based tests validating universal correctness properties
+  - 75 unit tests for individual components
+  - 5 integration tests for end-to-end workflows
+  - Tests cover navigation, display, data loading, and error handling
+  - Property tests use hypothesis library with 100+ iterations each
+
+### Documentation
+
+- Updated README.md with Interactive Identity Center Explorer section
+- Added usage examples and keyboard shortcuts
+- Documented graceful degradation behavior
+- Added troubleshooting guide for common issues
+
 ## [v2.1.1](https://github.com/velez94/reverse_diagrams/releases/tag/v2.1.1) - 2026-02-05
 
 <small>[Compare with v2.1.0](https://github.com/velez94/reverse_diagrams/compare/v2.1.0...v2.1.1)</small>

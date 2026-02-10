@@ -459,6 +459,68 @@ For example, to watch account assignments:
 
 ![view Acoount assigments](docs/images/show_console_view.gif)
 
+### Interactive Identity Center Explorer
+
+Explore your AWS Organizations and IAM Identity Center configuration interactively in the terminal with a beautiful, intuitive interface.
+
+```commandline
+# Launch the interactive explorer
+reverse_diagrams watch --explore
+
+# Use custom JSON directory
+reverse_diagrams watch --explore --json-dir diagrams/json
+
+# Short form
+reverse_diagrams watch -e
+```
+
+**Features:**
+- 🗂️ **Navigate Organizations**: Browse through organizational units and accounts hierarchically
+- 🔍 **View Account Details**: See all IAM Identity Center assignments for any account
+- 👥 **Group Memberships**: Explore groups and their members
+- 🔑 **Permission Sets**: View permission sets assigned to accounts
+- 🎨 **Color-Coded Display**: Different colors for OUs (blue), accounts (green), permission sets (yellow), groups (cyan), and users (white)
+- ⌨️ **Keyboard Navigation**: Use arrow keys and Enter to navigate, or type to search
+- 📊 **Summary Statistics**: See counts of permission sets, groups, and users at a glance
+- 🔙 **Breadcrumb Navigation**: Always know where you are in the hierarchy
+- ⚡ **Fast & Responsive**: Handles large organizations with 100+ accounts smoothly
+
+**Navigation:**
+- **Arrow Keys / j/k**: Move up and down in lists
+- **Enter**: Select an item (OU, account, or action)
+- **Type**: Search/filter items in the current view
+- **Back**: Return to the previous level
+- **Exit**: Quit the explorer
+
+**Example Workflow:**
+1. Start the explorer: `reverse_diagrams watch --explore`
+2. Select an organizational unit from the root view
+3. Browse accounts and nested OUs within that OU
+4. Select an account to view its IAM Identity Center assignments
+5. See permission sets, groups, and users with full details
+6. Navigate back to explore other parts of your organization
+7. Exit when done
+
+**Requirements:**
+- JSON data files must exist (run `reverse_diagrams -o -i` first)
+- Default location: `diagrams/json/`
+- Required files:
+  - `organizations_complete.json` (required)
+  - `account_assignments.json` (optional - graceful degradation)
+  - `groups.json` (optional - graceful degradation)
+
+**Graceful Degradation:**
+If optional JSON files are missing, the explorer continues to work with reduced functionality:
+- Missing `account_assignments.json`: Accounts shown without assignment information
+- Missing `groups.json`: Group membership details not available
+- The explorer displays clear messages about missing data
+
+**Error Handling:**
+The explorer provides clear, actionable error messages:
+- Missing required files: Shows exact file path and how to generate it
+- Invalid JSON: Displays parsing errors with file location
+- Empty organizations: Shows helpful message about data collection
+
 ### Combine the options
 
 ```commandline

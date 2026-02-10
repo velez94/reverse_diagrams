@@ -228,7 +228,7 @@ def create_account_assignments_view(assign):
         console = Console()
         c = [
             Panel(
-                f"[b]{account}[/b]\n[blue]{pretty_account_assignments(assign)}",
+                f"[b]{account}[/b]\n[blue]{pretty_account_assignments(assign[account])}",
                 expand=True,
             )
             for account in assign
@@ -261,46 +261,79 @@ def create_organizations_console_view(org_data):
     """
     Create console view for AWS Organizations.
     
-    :param org_data: Organizations data from JSON file
+    :param org_data: Organizations data from JSON file (can be dict or list)
     :return:
     """
     console = Console()
     
-    # Get organization info
-    org_info = org_data.get("organization", {})
-    accounts = org_data.get("accounts", [])
-    ous = org_data.get("organizational_units", [])
-    org_complete = org_data.get("organizations_complete", {})
+    # Handle case where org_data is a list (organizations.json format)
+    if isinstance(org_data, list):
+        # This is the simple list format from organizations.json
+        org_info = {}
+        accounts = org_data
+        ous = []
+        org_complete = {}
+    # Handle case where org_data has organizationalUnits key (organizations_complete.json format)
+    elif "organizationalUnits" in org_data:
+        # This is the organizations_complete.json format
+        org_info = {
+            "Id": "N/A",
+            "MasterAccountId": org_data.get("masterAccountId", "N/A")
+        }
+        accounts = []
+        ous = []
+        org_complete = org_data
+    else:
+        # This is the complete dict format with organization details
+        org_info = org_data.get("organization", {})
+        accounts = org_data.get("accounts", [])
+        ous = org_data.get("organizational_units", [])
+        org_complete = org_data.get("organizations_complete", {})
     
     panels = []
     
     # Organization overview panel
     org_overview = f"[b]Organization ID:[/b] {org_info.get('Id', 'N/A')}\n"
     org_overview += f"[b]Master Account:[/b] {org_info.get('MasterAccountId', 'N/A')}\n"
-    org_overview += f"[b]Total Accounts:[/b] {len(accounts)}\n"
-    org_overview += f"[b]Organizational Units:[/b] {len(ous)}"
+    
+    # Count total accounts from org_complete if available
+    if org_complete and "organizationalUnits" in org_complete:
+        total_accounts = len(org_complete.get("noOutAccounts", []))
+        for ou_name, ou_data in org_complete.get("organizationalUnits", {}).items():
+            total_accounts += len(ou_data.get("accounts", {}))
+        org_overview += f"[b]Total Accounts:[/b] {total_accounts}\n"
+        org_overview += f"[b]Organizational Units:[/b] {len(org_complete.get('organizationalUnits', {}))}"
+    else:
+        org_overview += f"[b]Total Accounts:[/b] {len(accounts)}\n"
+        org_overview += f"[b]Organizational Units:[/b] {len(ous)}"
     
     panels.append(Panel(org_overview, title="[cyan]Organization Overview[/cyan]", expand=True))
     
     # Root level accounts
-    if org_complete:
+    if org_complete and "noOutAccounts" in org_complete:
         root_accounts = org_complete.get("noOutAccounts", [])
         if root_accounts:
             root_content = ""
             for acc in root_accounts:
-                root_content += f"[green]• {acc.get('name', 'Unknown')}[/green] (ID: {acc.get('id', 'N/A')})\n"
+                # Handle both dict formats: {"account": "id", "name": "name"} or {"id": "id", "name": "name"}
+                acc_id = acc.get("account") or acc.get("id", "N/A")
+                acc_name = acc.get("name", "Unknown")
+                root_content += f"[green]• {acc_name}[/green] (ID: {acc_id})\n"
             panels.append(Panel(root_content, title="[yellow]Root Level Accounts[/yellow]", expand=True))
         
         # Organizational Units with accounts
         org_units = org_complete.get("organizationalUnits", {})
         if org_units:
             for ou_name, ou_data in org_units.items():
-                ou_content = f"[b]Organizational Unit:[/b] {ou_name}\n\n"
+                ou_content = f"[b]Organizational Unit:[/b] {ou_name}\n"
+                ou_content += f"[b]OU ID:[/b] {ou_data.get('Id', 'N/A')}\n\n"
                 ou_accounts = ou_data.get("accounts", {})
                 if ou_accounts:
                     ou_content += "[b]Accounts:[/b]\n"
                     for acc_name, acc_info in ou_accounts.items():
-                        ou_content += f"[blue]• {acc_name}[/blue] (ID: {acc_info.get('id', 'N/A')})\n"
+                        # Handle both dict formats
+                        acc_id = acc_info.get("account") or acc_info.get("id", "N/A")
+                        ou_content += f"[blue]• {acc_name}[/blue] (ID: {acc_id})\n"
                 else:
                     ou_content += "[dim]No accounts in this OU[/dim]"
                 
@@ -309,13 +342,14 @@ def create_organizations_console_view(org_data):
         # Fallback: show all accounts if organizations_complete is not available
         if accounts:
             accounts_content = ""
-            for account in accounts[:10]:  # Show first 10 accounts
-                accounts_content += f"[green]• {account.get('Name', 'Unknown')}[/green]\n"
-                accounts_content += f"  ID: {account.get('Id', 'N/A')}\n"
-                accounts_content += f"  Status: {account.get('Status', 'N/A')}\n\n"
-            
-            if len(accounts) > 10:
-                accounts_content += f"[dim]... and {len(accounts) - 10} more accounts[/dim]"
+            for account in accounts:  # Show all accounts
+                # Handle both dict formats
+                acc_name = account.get("Name") or account.get("name", "Unknown")
+                acc_id = account.get("Id") or account.get("account", "N/A")
+                acc_status = account.get("Status") or account.get("status", "N/A")
+                accounts_content += f"[green]• {acc_name}[/green]\n"
+                accounts_content += f"  ID: {acc_id}\n"
+                accounts_content += f"  Status: {acc_status}\n\n"
             
             panels.append(Panel(accounts_content, title="[cyan]Accounts[/cyan]", expand=True))
     

@@ -56,6 +56,17 @@ def validate_arguments(args) -> None:
                 args.list_plugins, args.plugins, args.html_report]):
         if not args.version:
             raise ValueError("Please specify at least one operation: -o, -i, --html-report, or watch command")
+    
+    # Validate explore mode arguments
+    if hasattr(args, 'explore') and args.explore:
+        # Validate JSON directory exists if specified
+        if hasattr(args, 'json_dir'):
+            json_path = Path(args.json_dir)
+            if not json_path.exists():
+                raise ValueError(f"JSON directory not found: {args.json_dir}")
+        
+        # Explore mode doesn't require other watch flags
+        return
 
 
 def setup_logging_from_args(args, config: Config) -> None:
@@ -313,6 +324,20 @@ def main() -> int:
         help="Generate HTML report from the specified JSON file instead of console view. "
              "Example: reverse_diagrams watch -wi groups.json --generate-html"
     )
+    watch_group.add_argument(
+        "-e",
+        "--explore",
+        action="store_true",
+        help="Launch interactive explorer for AWS Organizations and IAM Identity Center. "
+             "Navigate through OUs, accounts, and permission assignments interactively. "
+             "Example: reverse_diagrams watch --explore"
+    )
+    watch_group.add_argument(
+        "--json-dir",
+        default="diagrams/json",
+        help="Directory containing JSON files for explorer mode (default: diagrams/json). "
+             "Example: reverse_diagrams watch --explore --json-dir /path/to/json"
+    )
 
     parser.add_argument("-v", "--version", help="Show version", action="store_true")
     parser.add_argument("-d", "--debug", help="Debug Mode", action="store_true")
@@ -413,8 +438,23 @@ def main() -> int:
         
         # Handle watch command
         if args.commands == "watch":
-            watch_on_demand(args=args)
-            return 0
+            # Check if explorer mode is requested
+            if hasattr(args, 'explore') and args.explore:
+                from .explorer.controller import ExplorerController
+                
+                # Get JSON directory from args or use default
+                json_dir = getattr(args, 'json_dir', 'diagrams/json')
+                
+                logging.info(f"Starting Interactive Identity Center Explorer with JSON directory: {json_dir}")
+                
+                # Create and start the explorer controller
+                controller = ExplorerController(json_dir)
+                controller.start()
+                return 0
+            else:
+                # Normal watch mode (console view)
+                watch_on_demand(args=args)
+                return 0
         
         # Handle HTML report generation (standalone or combined)
         should_generate_html = args.html_report

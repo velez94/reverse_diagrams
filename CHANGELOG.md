@@ -6,6 +6,32 @@ The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 <!-- insertion marker -->
+## [v2.2.1](https://github.com/velez94/reverse_diagrams/releases/tag/v2.2.1) - 2026-02-10
+
+<small>[Compare with v2.2.0](https://github.com/velez94/reverse_diagrams/compare/v2.2.0...v2.2.1)</small>
+
+### Bug Fixes
+
+- **Nested OU Support**: Fixed organizations_complete.json to properly handle nested Organizational Units at unlimited depth
+  - Updated `create_organization_complete_map()` in `src/aws/describe_organization.py`
+  - Updated `_create_organization_complete_map()` in `src/plugins/builtin/organizations_plugin.py`
+  - Implemented recursive `build_ou_structure()` function for proper nesting
+  - Previously only captured one level of OUs, now handles any depth
+  - Accounts are now correctly placed in their respective nested OUs
+  - Interactive Explorer can now navigate through deeply nested OU structures
+
+### Testing
+
+- Added 3 comprehensive tests for nested OU functionality
+  - Test 4-level deep OU hierarchy
+  - Test multiple independent branches
+  - Test empty OUs
+  - All tests passing
+
+### Documentation
+
+- Created NESTED_OU_BUG_FIX.md documenting the issue and solution
+
 ## [v2.2.0](https://github.com/velez94/reverse_diagrams/releases/tag/v2.2.0) - 2026-02-10
 
 <small>[Compare with v2.1.1](https://github.com/velez94/reverse_diagrams/compare/v2.1.1...v2.2.0)</small>

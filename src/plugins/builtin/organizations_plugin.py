@@ -242,8 +242,52 @@ class OrganizationsPlugin(AWSServicePlugin):
             accounts: List of accounts
             
         Returns:
-            Complete organization structure
+            Complete organization structure with properly nested OUs
         """
+        # Create lookup dictionaries for efficient access
+        ou_by_id = {ou["Id"]: ou for ou in organizational_units}
+        accounts_by_parent = {}
+        
+        # Group accounts by their parent OU
+        for account in accounts:
+            for parent in account.get("parents", []):
+                parent_id = parent["Id"]
+                if parent_id not in accounts_by_parent:
+                    accounts_by_parent[parent_id] = []
+                accounts_by_parent[parent_id].append(account)
+        
+        def build_ou_structure(ou_id: str) -> Dict[str, Any]:
+            """Recursively build OU structure with nested OUs and accounts."""
+            ou = ou_by_id.get(ou_id)
+            if not ou:
+                return {}
+            
+            ou_structure = {
+                "Id": ou["Id"],
+                "Name": ou["Name"],
+                "accounts": {},
+                "nestedOus": {},
+            }
+            
+            # Add accounts directly under this OU
+            if ou_id in accounts_by_parent:
+                for account in accounts_by_parent[ou_id]:
+                    ou_structure["accounts"][account["name"]] = {
+                        "account": account["account"],
+                        "name": account["name"]
+                    }
+            
+            # Find and add nested OUs
+            for child_ou in organizational_units:
+                for parent in child_ou.get("Parents", []):
+                    if parent["Type"] == "ORGANIZATIONAL_UNIT" and parent["Id"] == ou_id:
+                        # This is a child OU - recursively build its structure
+                        child_structure = build_ou_structure(child_ou["Id"])
+                        if child_structure:
+                            ou_structure["nestedOus"][child_ou["Name"]] = child_structure
+            
+            return ou_structure
+        
         organizations_complete = {
             "rootId": root_id,
             "masterAccountId": organization.get("MasterAccountId", ""),
@@ -251,33 +295,21 @@ class OrganizationsPlugin(AWSServicePlugin):
             "organizationalUnits": {},
         }
         
-        # Build OU hierarchy
+        # Add accounts directly under root
+        if root_id in accounts_by_parent:
+            for account in accounts_by_parent[root_id]:
+                organizations_complete["noOutAccounts"].append({
+                    "account": account["account"],
+                    "name": account["name"]
+                })
+        
+        # Build root-level OUs with their nested structures
         for ou in organizational_units:
             for parent in ou.get("Parents", []):
                 if parent["Type"] == "ROOT":
-                    organizations_complete["organizationalUnits"][ou["Name"]] = {
-                        "Id": ou["Id"],
-                        "Name": ou["Name"],
-                        "accounts": {},
-                        "nestedOus": {},
-                    }
-        
-        # Add accounts to appropriate OUs or root
-        for account in accounts:
-            for parent in account.get("parents", []):
-                if parent["Type"] == "ROOT":
-                    organizations_complete["noOutAccounts"].append({
-                        "account": account["account"],
-                        "name": account["name"]
-                    })
-                elif parent["Type"] == "ORGANIZATIONAL_UNIT":
-                    # Find the OU name
-                    ou_name = find_ou_name(organizational_units, parent["Id"])
-                    if ou_name and ou_name in organizations_complete["organizationalUnits"]:
-                        organizations_complete["organizationalUnits"][ou_name]["accounts"][account["name"]] = {
-                            "account": account["account"],
-                            "name": account["name"]
-                        }
+                    ou_structure = build_ou_structure(ou["Id"])
+                    if ou_structure:
+                        organizations_complete["organizationalUnits"][ou["Name"]] = ou_structure
         
         return organizations_complete
     
